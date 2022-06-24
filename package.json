@@ -1,0 +1,30 @@
+{
+  "name": "dottriples",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cristianvasquez/dotTriples.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cristianvasquez/dotTriples/issues"
+  },
+  "homepage": "https://github.com/cristianvasquez/dotTriples#readme",
+  "dependencies": {
+    "@yozora/parser": "^2.0.1",
+    "glob": "^8.0.3",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "expect": "^28.1.1",
+    "expect-mocha-snapshot": "^2.1.5",
+    "mocha": "^10.0.0"
+  }
+}
