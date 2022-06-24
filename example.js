@@ -1,7 +1,8 @@
 import { PassThrough } from 'stream'
 import pkg from 'glob'
+
 const { Glob } = pkg
-import { createGetRDF } from './src/getRDF.js'
+import { createDotTriplesInputStream } from './src/dotTriplesInputStream.js'
 
 const destStream = new PassThrough({
   objectMode: true,
@@ -11,7 +12,7 @@ const destStream = new PassThrough({
     callback()
   }
 })
-const inputStream = createGetRDF(destStream)
+const inputStream = createDotTriplesInputStream(destStream)
 
 const search = new Glob('*', { nodir: true })
 search.on('match', filename => inputStream.write(filename))

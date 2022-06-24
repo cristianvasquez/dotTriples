@@ -6,7 +6,7 @@ import { SimpleSplit } from './transforms/simpleSplit.js'
 import { WrapSource } from './transforms/wrapSource.js'
 import { uriResolver } from './uriResolver.js'
 
-function createGetRDF(destStream){
+function createDotTriplesInputStream(destStream){
   return new Transform({
     objectMode: true,
     transform (filename, enc, done) {
@@ -28,4 +28,4 @@ function createGetRDF(destStream){
   })
 }
 
-export {createGetRDF}
+export {createDotTriplesInputStream}
