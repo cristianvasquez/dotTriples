@@ -1,20 +1,22 @@
 import { Transform } from 'stream'
 import { THIS } from '../consts.js'
+import { LINKS_REGEXP, URLS_REGEXP } from '../regexp.js'
 
 class SetEntities extends Transform {
-  constructor (uriResolver, opts) {
-
+  constructor (context, uriResolver, opts) {
     super({ ...opts, objectMode: true })
+    this.context = context
     this.uriResolver = uriResolver
   }
 
-  _transform (chunk, encoding, callback) {
-    const { source, content } = chunk
+  _transform (content, encoding, callback) {
     if (!content.exception) {
-      content.subject = setEntities(source, content.subject, this.uriResolver)
-      content.predicate = setEntities(source, content.predicate, this.uriResolver)
-      content.object = setEntities(source, content.object, this.uriResolver)
-      this.push({ source, content })
+      content.subject = setEntities(this.context.path, content.subject, this.uriResolver)
+      content.predicate = setEntities(this.context.path, content.predicate, this.uriResolver)
+      content.object = setEntities(this.context.path, content.object, this.uriResolver)
+      this.push(content)
+    } else {
+      // What to do when there is an exception?
     }
 
     callback()
@@ -25,8 +27,6 @@ function trim (txt) {
   return txt.replace(/^\s+|\s+$/gm, '')
 }
 
-const LINKS_REGEXP = /(\[\[[^\]\n]*\]\])/g
-
 function getInternalLinks (text) {
   const internalLinks = []
   for (const match of text.matchAll(LINKS_REGEXP)) {
@@ -35,12 +35,17 @@ function getInternalLinks (text) {
   return internalLinks
 }
 
-function setEntities (source, term, uriResolver) {
+function getURLs (text) {
+  const result = text.match(URLS_REGEXP)
+  return result ? result : []
+}
+
+function setEntities (path, term, uriResolver) {
   term.raw = trim(term.raw)
   const entities = []
   if (term.raw === THIS) {
-    const uri = uriResolver.uriFromSource(source)
-    const name = uriResolver.nameFromSource(source)
+    const uri = uriResolver.uriFromPath(path)
+    const name = uriResolver.nameFromPath(path)
     entities.push({
       uri: uri,
       name: name
@@ -54,6 +59,13 @@ function setEntities (source, term, uriResolver) {
         name: name
       })
     }
+
+    for (const url of getURLs(term.raw)) {
+      entities.push({
+        uri: url
+      })
+    }
+
   }
 
   if (entities.length) {

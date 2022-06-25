@@ -1,6 +1,12 @@
-const uriResolver = {
-  uriFromSource: (source) => `URI[${source}]`,
-  nameFromSource: (source) => `NAME[${source}]`,
-  uriFromName: (name) => `URI[${name}]`
+import { getNameFromPath } from './buildIndex.js'
+
+function createUriResolver (index) {
+  return {
+    uriFromPath: (path) => `URIfromPath[${path}]`,
+    nameFromPath: getNameFromPath,
+    uriFromName: (name) => `URIfromName[${name}]`
+  }
+
 }
-export { uriResolver }
+
+export { createUriResolver }

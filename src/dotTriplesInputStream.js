@@ -3,21 +3,25 @@ import { Transform } from 'stream'
 import { DotTriples } from './transforms/dotTriples.js'
 import { SetEntities } from './transforms/setEntities.js'
 import { SimpleSplit } from './transforms/simpleSplit.js'
-import { WrapSource } from './transforms/wrapSource.js'
-import { uriResolver } from './uriResolver.js'
+import { resolve} from 'path'
 
-function createDotTriplesInputStream(destStream){
+function createDotTriplesInputStream(context, destStream){
   return new Transform({
     objectMode: true,
-    transform (filename, enc, done) {
-      console.log(`processing ${filename}`)
-      const fileStream = createReadStream(filename)
+    transform (path, enc, done) {
+      // console.log(`processing ${filename}`)
+
+      const filePath = resolve(context.basePath,path)
+
+      const fileStream = createReadStream(filePath)
       .pipe(new SimpleSplit('\n'))
       .pipe(new DotTriples())
-      .pipe(new WrapSource(filename))
-      .pipe(new SetEntities(uriResolver))
+      .pipe(new SetEntities({path:filePath},context.uriResolver))
 
       fileStream.pipe(destStream, { end: false })
+      fileStream.on('new', (item) => {
+        console.log('item',item)
+      })
       fileStream.on('error', done)
       fileStream.on('end', done)
     }
