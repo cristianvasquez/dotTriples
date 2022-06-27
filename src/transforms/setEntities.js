@@ -3,17 +3,17 @@ import { THIS } from '../consts.js'
 import { LINKS_REGEXP, URLS_REGEXP } from '../regexp.js'
 
 class SetEntities extends Transform {
-  constructor (context, uriResolver, opts) {
+  constructor (fileInfo, uriResolver, opts) {
     super({ ...opts, objectMode: true })
-    this.context = context
+    this.fileInfo = fileInfo
     this.uriResolver = uriResolver
   }
 
   _transform (content, encoding, callback) {
     if (!content.exception) {
-      content.subject = setEntities(this.context.path, content.subject, this.uriResolver)
-      content.predicate = setEntities(this.context.path, content.predicate, this.uriResolver)
-      content.object = setEntities(this.context.path, content.object, this.uriResolver)
+      content.subject = setEntities(this.fileInfo.path, content.subject, this.uriResolver)
+      content.predicate = setEntities(this.fileInfo.path, content.predicate, this.uriResolver)
+      content.object = setEntities(this.fileInfo.path, content.object, this.uriResolver)
       this.push(content)
     } else {
       // What to do when there is an exception?

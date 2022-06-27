@@ -18,9 +18,22 @@
   },
   "homepage": "https://github.com/cristianvasquez/dotTriples#readme",
   "dependencies": {
+    "@yozora/core-parser": "^2.0.2-alpha.0",
     "@yozora/parser": "^2.0.1",
+    "@yozora/parser-gfm": "^2.0.2-alpha.0",
+    "@yozora/tokenizer-blockquote": "^2.0.2-alpha.0",
+    "@yozora/tokenizer-paragraph": "^2.0.2-alpha.0",
+    "@yozora/tokenizer-text": "^2.0.2-alpha.0",
     "glob": "^8.0.3",
-    "lodash": "^4.17.21"
+    "line-reader": "^0.4.0",
+    "lodash": "^4.17.21",
+    "rehype-stringify": "^9.0.3",
+    "remark-frontmatter": "^4.0.1",
+    "remark-gfm": "^3.0.1",
+    "remark-parse": "^10.0.1",
+    "remark-rehype": "^10.1.0",
+    "stream-to-generator": "^0.1.1",
+    "unified": "^10.1.2"
   },
   "devDependencies": {
     "expect": "^28.1.1",
