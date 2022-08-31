@@ -1,8 +1,8 @@
-import { unified } from 'unified'
-import remarkParse from 'remark-parse'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkGfm from 'remark-gfm'
+import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import { unified } from 'unified'
 
 function createMarkdownParser () {
   const parser = unified().use(remarkParse).use(remarkFrontmatter).use(remarkGfm).use(remarkRehype)
@@ -14,18 +14,3 @@ function createMarkdownParser () {
 }
 
 export {createMarkdownParser}
-//
-// const parser = createParser()
-// const result = await parser.parse(`---
-// tags:
-//   - 'journal/2022/06'
-// ---
-//
-// # Title
-//
-// Some text
-//
-// a :: b
-// `)
-//
-// console.log(JSON.stringify(result, null, 2))

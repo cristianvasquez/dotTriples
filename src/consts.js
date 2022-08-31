@@ -1,3 +1,4 @@
+
 const DOTDOT = '::'
 const COMMENTED_DOTDOT = '`::`'
 const THIS = '__THIS__'

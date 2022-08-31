@@ -1,19 +1,21 @@
 import { Transform } from 'stream'
-import { THIS } from '../consts.js'
+import { THIS, UNDEFINED } from '../consts.js'
 import { LINKS_REGEXP, URLS_REGEXP } from '../regexp.js'
 
 class SetEntities extends Transform {
-  constructor (fileInfo, uriResolver, opts) {
+  constructor ({ uriResolver }, opts) {
     super({ ...opts, objectMode: true })
-    this.fileInfo = fileInfo
     this.uriResolver = uriResolver
   }
 
   _transform (content, encoding, callback) {
     if (!content.exception) {
-      content.subject = setEntities(this.fileInfo.path, content.subject, this.uriResolver)
-      content.predicate = setEntities(this.fileInfo.path, content.predicate, this.uriResolver)
-      content.object = setEntities(this.fileInfo.path, content.object, this.uriResolver)
+
+      const { header: { path }, subject, predicate, object } = content
+
+      content.subject = setEntities(path, subject, this.uriResolver)
+      content.predicate = setEntities(path, predicate, this.uriResolver)
+      content.object = setEntities(path, object, this.uriResolver)
       this.push(content)
     } else {
       // What to do when there is an exception?
@@ -48,21 +50,25 @@ function setEntities (path, term, uriResolver) {
     const name = uriResolver.nameFromPath(path)
     entities.push({
       uri: uri,
-      name: name
+      name: name,
     })
     term.raw = `[[${name}]]`
+  } else if (term.raw === UNDEFINED) {
+    entities.push({
+      uri: uriResolver.undefinedProperty,
+    })
   } else {
     for (const name of getInternalLinks(term.raw)) {
       const uri = uriResolver.uriFromName(name)
       entities.push({
         uri: uri,
-        name: name
+        name: name,
       })
     }
 
     for (const url of getURLs(term.raw)) {
       entities.push({
-        uri: url
+        uri: uriResolver.namedNode(url)
       })
     }
 
