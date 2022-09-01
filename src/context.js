@@ -6,6 +6,7 @@ import rdf from 'rdf-ext'
 const { Glob } = pkg
 
 const DEFAULT_SEARCH_PATTERN = './**/+(*.md|*.png|*.jpg|*.svg)'
+const MARKDOWN_FILES = './**/+(*.md)'
 
 function getNameFromPath (filePath) {
   const fileName = filePath.split('/').slice(-1)[0]
@@ -15,12 +16,14 @@ function getNameFromPath (filePath) {
 }
 
 function getUriFromPath (path) {
-  return rdf.namedNode(`http://vault/entity/${normalize(path)}`)
+  return rdf.namedNode(
+    `http://vault/entity/${encodeURIComponent(normalize(path))}`)
 }
 
 function buildPropertyFromText (text) {
   return rdf.namedNode(
-    `http://vault/relation/${text.replaceAll(' ', '-').toLowerCase()}`)
+    `http://vault/relation/${encodeURIComponent(
+      text.replaceAll(' ', '-').toLowerCase())}`)
 }
 
 function getUriFromName (fullName, namesPaths) {
@@ -78,4 +81,4 @@ async function createContext (basePath) {
   return { basePath, index, uriResolver }
 }
 
-export { createContext, DEFAULT_SEARCH_PATTERN }
+export { createContext, DEFAULT_SEARCH_PATTERN, MARKDOWN_FILES }

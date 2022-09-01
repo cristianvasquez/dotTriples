@@ -12,7 +12,6 @@ class SetEntities extends Transform {
     if (!content.exception) {
 
       const { header: { path }, subject, predicate, object } = content
-
       content.subject = setEntities(path, subject, this.uriResolver)
       content.predicate = setEntities(path, predicate, this.uriResolver)
       content.object = setEntities(path, object, this.uriResolver)
@@ -26,11 +25,20 @@ class SetEntities extends Transform {
 }
 
 function trim (txt) {
+  if (!txt.replace) {
+    // Might be a number
+    return txt
+  }
   return txt.replace(/^\s+|\s+$/gm, '')
 }
 
 function getInternalLinks (text) {
+  if (!text.matchAll){
+    // Might be a number
+    return []
+  }
   const internalLinks = []
+
   for (const match of text.matchAll(LINKS_REGEXP)) {
     internalLinks.push(match[1].substring(2, match[1].length - 2))
   }
@@ -38,6 +46,10 @@ function getInternalLinks (text) {
 }
 
 function getURLs (text) {
+  if (!text.match){
+    // Might be a number
+    return []
+  }
   const result = text.match(URLS_REGEXP)
   return result ? result : []
 }

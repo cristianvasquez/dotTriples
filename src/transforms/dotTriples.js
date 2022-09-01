@@ -92,7 +92,11 @@ class DotTriples extends Transform {
         }
       }
     } catch (e) {
-      console.log(e, header)
+      this.push({
+        header,
+        exception: 'invalid-yaml',
+        data: e,
+      })
     }
   }
 
