@@ -9,7 +9,7 @@ const { Glob } = pkg
 const dir = './test/markdown/'
 // const dir = '../../../obsidian/workspace/'
 
-const outputStream = createDatasetPrinterOutput()
+const outputStream = createDatasetPrinterOutput({ onlyCounts: false })
 const context = await createContext(resolve(dir))
 const inputStream = createMarkdownPipeline(context, outputStream)
 

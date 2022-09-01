@@ -11,11 +11,16 @@ function createJsonPrinterOutput () {
   })
 }
 
-function createDatasetPrinterOutput () {
+function createDatasetPrinterOutput ({ onlyCounts } = { onlyCounts: false }) {
   return new PassThrough({
-    objectMode: true, write (chunk, encoding, callback) {
-      console.log(chunk.toString())
-      this.push(chunk)
+    objectMode: true, write (dataset, encoding, callback) {
+      if (onlyCounts) {
+        this.count = this.count ? this.count + dataset.size : dataset.size
+        console.log(`${this.count} quads`)
+      } else {
+        console.log(dataset.toString())
+      }
+      this.push(dataset)
       callback()
     },
   })
