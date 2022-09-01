@@ -11,6 +11,8 @@ class ProduceQuads extends Transform {
 
     const { header, subject, predicate, object } = content
 
+    const documentIRI = this.uriResolver.getUriFromPath(header.path)
+
     const propertyFromRaw = (raw) => {
       return {
         term: this.uriResolver.buildPropertyFromText(raw),
@@ -38,7 +40,8 @@ class ProduceQuads extends Transform {
     for (const subject of subjects) {
       for (const predicate of predicates) {
         for (const object of objects) {
-          const quad = rdf.quad(subject.term, predicate.term, object.term)
+          const quad = rdf.quad(subject.term, predicate.term, object.term,
+            documentIRI)
           dataset.addAll([quad])
         }
       }
@@ -47,7 +50,8 @@ class ProduceQuads extends Transform {
     const labels = x => {
       return rdf.quad(x.term,
         rdf.namedNode('http://www.w3.org/2001/XMLSchema#label'),
-        rdf.literal(x.label))
+        rdf.literal(x.label)),
+        documentIRI
     }
     dataset.addAll(subjects.filter(x=>x.label).map(labels))
     dataset.addAll(predicates.filter(x=>x.label).map(labels))
