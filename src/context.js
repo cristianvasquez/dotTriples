@@ -15,37 +15,33 @@ function getNameFromPath (filePath) {
 }
 
 function getUriFromPath (path) {
-  return rdf.namedNode(`http://vault/${normalize(path)}`)
+  return rdf.namedNode(`http://vault/entity/${normalize(path)}`)
 }
 
-function createUriResolver (index) {
-  const { namesPaths } = index
-  return {
-    namedNode: rdf.namedNode,
-    undefinedProperty: rdf.namedNode('http://vault/relatedTo'),
-    uriFromPath: getUriFromPath,
-    nameFromPath: getNameFromPath,
-    uriFromName: (fullName) => {
+function buildPropertyFromText (text) {
+  return rdf.namedNode(
+    `http://vault/relation/${text.replaceAll(' ', '-').toLowerCase()}`)
+}
 
-      const { dir, name, ext } = parse(fullName)
-      let uri = undefined
-      if (dir) {
-        // Obsidian's way.
-        // If the label does not contain a path, it's unique.
-        // It's an absolute path, we don't look up
-        const path = `${name}${ext ?? '.md'}`  // Normally .md are omitted
-        uri = getUriFromPath(path)
-      } else if (namesPaths.has(name)) {
-        // we look up otherwise
-        const [path] = namesPaths.get(name)
-        uri = getUriFromPath(path)
-      } else {
-        // console.log(`Warning, [${fullName}] not found`)
-      }
+function getUriFromName (fullName, namesPaths) {
 
-      return uri
-    },
+  const { dir, name, ext } = parse(fullName)
+  let uri = undefined
+  if (dir) {
+    // Obsidian's way.
+    // If the label does not contain a path, it's unique.
+    // It's an absolute path, we don't look up
+    const path = `${name}${ext ?? '.md'}`  // Normally .md are omitted
+    uri = getUriFromPath(path)
+  } else if (namesPaths.has(name)) {
+    // we look up otherwise
+    const [path] = namesPaths.get(name)
+    uri = getUriFromPath(path)
+  } else {
+    // console.log(`Warning, [${fullName}] not found`)
   }
+
+  return uri
 }
 
 async function findFiles (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
@@ -61,6 +57,19 @@ async function findFiles (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
   })
   const files = (await once(search, 'end'))[0]
   return { namesPaths, files }
+}
+
+function createUriResolver (index) {
+  const { namesPaths } = index
+  return {
+    namedNode: rdf.namedNode,
+    literal: rdf.literal,
+    buildPropertyFromText,
+    undefinedProperty: rdf.namedNode('http://vault/relation/relatedTo'),
+    getUriFromPath,
+    getNameFromPath,
+    getUriFromName: (name) => getUriFromName(name, namesPaths),
+  }
 }
 
 async function createContext (basePath) {

@@ -1,1 +1,1 @@
-Hello :: World
+Streams RDF triples from a markdown vault.

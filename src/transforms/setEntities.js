@@ -46,8 +46,8 @@ function setEntities (path, term, uriResolver) {
   term.raw = trim(term.raw)
   const entities = []
   if (term.raw === THIS) {
-    const uri = uriResolver.uriFromPath(path)
-    const name = uriResolver.nameFromPath(path)
+    const uri = uriResolver.getUriFromPath(path)
+    const name = uriResolver.getNameFromPath(path)
     entities.push({
       uri: uri,
       name: name,
@@ -59,7 +59,7 @@ function setEntities (path, term, uriResolver) {
     })
   } else {
     for (const name of getInternalLinks(term.raw)) {
-      const uri = uriResolver.uriFromName(name)
+      const uri = uriResolver.getUriFromName(name)
       entities.push({
         uri: uri,
         name: name,

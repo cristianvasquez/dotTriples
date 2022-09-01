@@ -11,4 +11,14 @@ function createJsonPrinterOutput () {
   })
 }
 
-export { createJsonPrinterOutput }
+function createDatasetPrinterOutput () {
+  return new PassThrough({
+    objectMode: true, write (chunk, encoding, callback) {
+      console.log(chunk.toString())
+      this.push(chunk)
+      callback()
+    },
+  })
+}
+
+export { createJsonPrinterOutput, createDatasetPrinterOutput }

@@ -3,5 +3,5 @@
 is a :: [[Test file]]
 
 [[Bob]] :: age :: 44
-[[Bob]] :: website :: http://example.org
-[[Alice]] :: is a :: [[Person]]
+[[Bob]] :: website :: http://examplex.org
+[[Alice]] :: is a      :: [[Person]]
