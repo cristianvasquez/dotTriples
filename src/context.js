@@ -6,7 +6,8 @@ import rdf from 'rdf-ext'
 const { Glob } = pkg
 
 const DEFAULT_SEARCH_PATTERN = './**/+(*.md|*.png|*.jpg|*.svg)'
-const MARKDOWN_FILES = './**/+(*.md)'
+const MARKDOWN_FILES_PATTERN = './**/+(*.md)'
+const DEFAULT_NAMESPACE = rdf.namespace('http://www.vault/')
 
 function getNameFromPath (filePath) {
   const fileName = filePath.split('/').slice(-1)[0]
@@ -15,18 +16,21 @@ function getNameFromPath (filePath) {
     : fileName
 }
 
-function getUriFromPath (path) {
-  return rdf.namedNode(
-    `http://vault/entity/${encodeURIComponent(normalize(path))}`)
+function getUriFromPath (path, { baseNamespace }) {
+  return baseNamespace[encodeURIComponent(normalize(path))]
 }
 
-function buildPropertyFromText (text) {
-  return rdf.namedNode(
-    `http://vault/relation/${encodeURIComponent(
-      text.replaceAll(' ', '-').toLowerCase())}`)
+function buildPropertyFromText (text, { mappers, baseNamespace }) {
+
+  if (mappers && mappers[text]) {
+    return mappers[text]
+  }
+  return baseNamespace[encodeURIComponent(
+    text.replaceAll(' ', '-').toLowerCase())]
+
 }
 
-function getUriFromName (fullName, namesPaths) {
+function getUriFromName (fullName, { namesPaths, baseNamespace }) {
 
   const { dir, name, ext } = parse(fullName)
   let uri = undefined
@@ -35,11 +39,11 @@ function getUriFromName (fullName, namesPaths) {
     // If the label does not contain a path, it's unique.
     // It's an absolute path, we don't look up
     const path = `${name}${ext ?? '.md'}`  // Normally .md are omitted
-    uri = getUriFromPath(path)
+    uri = getUriFromPath(path, { baseNamespace })
   } else if (namesPaths.has(name)) {
     // we look up otherwise
     const [path] = namesPaths.get(name)
-    uri = getUriFromPath(path)
+    uri = getUriFromPath(path, { baseNamespace })
   } else {
     // console.log(`Warning, [${fullName}] not found`)
   }
@@ -62,23 +66,31 @@ async function findFiles (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
   return { namesPaths, files }
 }
 
-function createUriResolver (index) {
+function createUriResolver ({ index, mappers, baseNamespace }) {
   const { namesPaths } = index
   return {
     namedNode: rdf.namedNode,
     literal: rdf.literal,
-    buildPropertyFromText,
-    undefinedProperty: rdf.namedNode('http://vault/relation/relatedTo'),
-    getUriFromPath,
+    buildPropertyFromText: (text) => buildPropertyFromText(text,
+      { mappers, baseNamespace }),
+    undefinedProperty: baseNamespace.relatedTo,
+    getUriFromPath: (path) => getUriFromPath(path, { baseNamespace }),
     getNameFromPath,
-    getUriFromName: (name) => getUriFromName(name, namesPaths),
+    getUriFromName: (name) => getUriFromName(name,
+      { namesPaths, baseNamespace }),
   }
 }
 
-async function createContext (basePath) {
+async function createContext ({ basePath, mappers, baseNamespace }) {
   const index = await findFiles(basePath)
-  const uriResolver = createUriResolver(index)
+  const uriResolver = createUriResolver(
+    { index, mappers, baseNamespace: baseNamespace ?? DEFAULT_NAMESPACE })
   return { basePath, index, uriResolver }
 }
 
-export { createContext, DEFAULT_SEARCH_PATTERN, MARKDOWN_FILES }
+export {
+  createContext,
+  DEFAULT_SEARCH_PATTERN,
+  MARKDOWN_FILES_PATTERN,
+  DEFAULT_NAMESPACE,
+}
