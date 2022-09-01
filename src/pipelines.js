@@ -2,10 +2,10 @@ import { createReadStream } from 'fs'
 import { resolve } from 'path'
 import { Transform } from 'stream'
 import { createMarkdownParser } from './markdownParser.js'
-import { DotTriples } from './transforms/dotTriples.js'
+import { DetectEntities } from './transforms/detectEntities.js'
+import { ParseDotTriples } from './transforms/parseDotTriples.js'
 import { ParseMarkdown } from './transforms/parseMarkdown.js'
-import { ProduceQuads } from './transforms/ProduceQuads.js'
-import { SetEntities } from './transforms/setEntities.js'
+import { ProduceDatasets } from './transforms/produceDatasets.js'
 
 // Expects markdown files, and produces triples
 function createMarkdownPipeline ({ basePath, uriResolver }, destStream) {
@@ -16,9 +16,9 @@ function createMarkdownPipeline ({ basePath, uriResolver }, destStream) {
       const filePath = resolve(basePath, path)
       const fileStream = createReadStream(filePath).
         pipe(new ParseMarkdown({ markdownParser }, { path }, {})).
-        pipe(new DotTriples()).
-        pipe(new SetEntities({ uriResolver }, {})).
-        pipe(new ProduceQuads({ uriResolver }, {}))
+        pipe(new ParseDotTriples()).
+        pipe(new DetectEntities({ uriResolver }, {})).
+        pipe(new ProduceDatasets({ uriResolver }, {}))
 
       fileStream.pipe(destStream, { end: false })
       fileStream.on('new', (item) => {

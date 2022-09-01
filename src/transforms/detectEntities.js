@@ -2,7 +2,7 @@ import { Transform } from 'stream'
 import { THIS, UNDEFINED } from '../consts.js'
 import { LINKS_REGEXP, URLS_REGEXP } from '../regexp.js'
 
-class SetEntities extends Transform {
+class DetectEntities extends Transform {
   constructor ({ uriResolver }, opts) {
     super({ ...opts, objectMode: true })
     this.uriResolver = uriResolver
@@ -93,4 +93,4 @@ function setEntities (path, term, uriResolver) {
   return term
 }
 
-export { SetEntities }
+export { DetectEntities }

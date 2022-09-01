@@ -1,7 +1,7 @@
 import rdf from 'rdf-ext'
 import { Transform } from 'stream'
 
-class ProduceQuads extends Transform {
+class ProduceDatasets extends Transform {
   constructor ({ uriResolver }, opts) {
     super({ ...opts, objectMode: true })
     this.uriResolver = uriResolver
@@ -63,4 +63,4 @@ class ProduceQuads extends Transform {
   }
 }
 
-export { ProduceQuads }
+export { ProduceDatasets }

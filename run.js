@@ -13,19 +13,17 @@ const dir = './test/markdown/'
 
 // Config
 const vault = rdf.namespace('http://example.org/')
-const mappers = {
+const customMappers = {
   'is a': ns.rdf.type,
 }
 
 // Build pipelines
 const outputStream = createDatasetPrinterOutput({ onlyCounts: false })
-const context = await createContext({ basePath: resolve(dir), baseNamespace:vault, mappers })
+const context = await createContext({ basePath: resolve(dir), baseNamespace:vault, mappers:customMappers })
 const inputStream = createMarkdownPipeline(context, outputStream)
 
 // Add files one by one
 // inputStream.write('hello.md')
-// inputStream.write('Yaml.md')
-// inputStream.write('./a/Test.md')
 
 // Search for all markdown in the directory
 const search = new Glob(MARKDOWN_FILES_PATTERN,

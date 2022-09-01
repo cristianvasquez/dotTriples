@@ -5,7 +5,7 @@ import { LINKS_REGEXP } from '../regexp.js'
 
 const PLACEHOLDER = '5de1049b-559f-42e2-8279-ea0c7cfa8f40'
 
-class DotTriples extends Transform {
+class ParseDotTriples extends Transform {
   constructor (opts) {
     super({ ...opts, objectMode: true })
   }
@@ -113,4 +113,4 @@ class DotTriples extends Transform {
   }
 }
 
-export { DotTriples }
+export { ParseDotTriples }
