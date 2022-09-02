@@ -17,17 +17,15 @@ function getNameFromPath (filePath) {
 }
 
 function getUriFromPath (path, { baseNamespace }) {
-  return baseNamespace[encodeURIComponent(normalize(path))]
+  return baseNamespace[encodeURI(normalize(path))]
 }
 
 function buildPropertyFromText (text, { mappers, baseNamespace }) {
-
   if (mappers && mappers[text]) {
     return mappers[text]
   }
   return baseNamespace[encodeURIComponent(
     text.replaceAll(' ', '-').toLowerCase())]
-
 }
 
 function getUriFromName (fullName, { namesPaths, baseNamespace }) {
@@ -71,9 +69,12 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
   return {
     namedNode: rdf.namedNode,
     literal: rdf.literal,
+    fallbackUris: {
+      undefinedProperty: baseNamespace['related-to'],
+      notFoundURI: baseNamespace['not-found-in-vault'],
+    },
     buildPropertyFromText: (text) => buildPropertyFromText(text,
       { mappers, baseNamespace }),
-    undefinedProperty: baseNamespace.relatedTo,
     getUriFromPath: (path) => getUriFromPath(path, { baseNamespace }),
     getNameFromPath,
     getUriFromName: (name) => getUriFromName(name,

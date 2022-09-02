@@ -5,6 +5,8 @@ const ns = {
   schema: rdf.namespace('http://schema.org/'),
   sh: rdf.namespace('http://www.w3.org/ns/shacl#'),
   xsd: rdf.namespace('http://www.w3.org/2001/XMLSchema#'),
+  foaf: rdf.namespace('http://xmlns.com/foaf/0.1/'),
+  purl: rdf.namespace('http://purl.org/dc/terms/'),
 }
 
 export default ns

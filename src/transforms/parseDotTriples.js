@@ -1,7 +1,7 @@
 import yaml from 'js-yaml'
 import { Transform } from 'stream'
 import { COMMENTED_DOTDOT, DOTDOT, THIS, UNDEFINED } from '../consts.js'
-import { LINKS_REGEXP } from '../regexp.js'
+import { MEDIAWIKI_LINKS_REGEXP } from '../regexp.js'
 
 const PLACEHOLDER = '5de1049b-559f-42e2-8279-ea0c7cfa8f40'
 
@@ -11,7 +11,7 @@ class ParseDotTriples extends Transform {
   }
 
   pushNonTypedLinks (text, header) {
-    for (const match of text.matchAll(LINKS_REGEXP)) {
+    for (const match of text.matchAll(MEDIAWIKI_LINKS_REGEXP)) {
       this.push({
         header,
         raw: text,

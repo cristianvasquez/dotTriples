@@ -1,6 +1,11 @@
+import { join, parse } from 'path'
 import { Transform } from 'stream'
 import { THIS, UNDEFINED } from '../consts.js'
-import { LINKS_REGEXP, URLS_REGEXP } from '../regexp.js'
+import {
+  MARKDOWN_LINKS_REGEXP,
+  MEDIAWIKI_LINKS_REGEXP,
+  URLS_REGEXP,
+} from '../regexp.js'
 
 class DetectEntities extends Transform {
   constructor ({ uriResolver }, opts) {
@@ -32,24 +37,23 @@ function trim (txt) {
   return txt.replace(/^\s+|\s+$/gm, '')
 }
 
-function getInternalLinks (text) {
-  if (!text.matchAll){
-    // Might be a number
-    return []
-  }
+function getMarkdownLinks (text) {
   const internalLinks = []
+  for (const match of text.matchAll(MARKDOWN_LINKS_REGEXP)) {
+    internalLinks.push(match[1].substring(1, match[1].length - 1))
+  }
+  return internalLinks
+}
 
-  for (const match of text.matchAll(LINKS_REGEXP)) {
+function getInternalWikiLinks (text) {
+  const internalLinks = []
+  for (const match of text.matchAll(MEDIAWIKI_LINKS_REGEXP)) {
     internalLinks.push(match[1].substring(2, match[1].length - 2))
   }
   return internalLinks
 }
 
 function getURLs (text) {
-  if (!text.match){
-    // Might be a number
-    return []
-  }
   const result = text.match(URLS_REGEXP)
   return result ? result : []
 }
@@ -67,23 +71,32 @@ function setEntities (path, term, uriResolver) {
     term.raw = `[[${name}]]`
   } else if (term.raw === UNDEFINED) {
     entities.push({
-      uri: uriResolver.undefinedProperty,
+      uri: uriResolver.fallbackUris.undefinedProperty,
     })
   } else {
-    for (const name of getInternalLinks(term.raw)) {
-      const uri = uriResolver.getUriFromName(name)
-      entities.push({
-        uri: uri,
-        name: name,
-      })
-    }
 
-    for (const url of getURLs(term.raw)) {
-      entities.push({
-        uri: uriResolver.namedNode(url)
-      })
+    if (typeof term.raw === 'string' || term.raw instanceof String) {
+      for (const markdownLink of getMarkdownLinks(term.raw)) {
+        // @TODO lookup rules that apply for absolute paths
+        const { dir } = parse(path)
+        const targetPath = join(dir, trim(markdownLink))
+        const uri = uriResolver.getUriFromPath(targetPath)
+        entities.push({
+          uri:uri??uriResolver.fallbackUris.notFoundURI,
+        })
+      }
+      for (const name of getInternalWikiLinks(term.raw)) {
+        const uri = uriResolver.getUriFromName(trim(name))
+        entities.push({
+          uri:uri??uriResolver.fallbackUris.notFoundURI,
+        })
+      }
+      for (const url of getURLs(term.raw)) {
+        entities.push({
+          uri: uriResolver.namedNode(url),
+        })
+      }
     }
-
   }
 
   if (entities.length) {
