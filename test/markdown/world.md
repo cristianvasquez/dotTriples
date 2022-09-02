@@ -1,7 +1,7 @@
 # Dot triples syntax
 
 property :: value
-subject :: property :: value
+subject2 :: property2 :: value2
 ambiguity :: ambiguity :: ambiguity :: ambiguity
 
-[[hello]] [[Yaml]]
+[[hello]] :: [[Yaml]]

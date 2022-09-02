@@ -1,7 +1,5 @@
 # Example file
 
 is a :: [[Test file]]
-
-[[Bob]] :: age :: 44
-[[Bob]] :: website :: http://examplex.org
-[[Alice]] :: is a      :: [[Person]]
+[[Alice]] and [[Bob]] :: are :: [[Person]]
+http://bob.org :: is a :: WeBsiTe
