@@ -11,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/cristianvasquez/dotTriples.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Cristian Vasquez",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/cristianvasquez/dotTriples/issues"
   },
