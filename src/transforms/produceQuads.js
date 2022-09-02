@@ -1,7 +1,7 @@
 import rdf from 'rdf-ext'
 import { Transform } from 'stream'
 
-class ProduceDatasets extends Transform {
+class ProduceQuads extends Transform {
   constructor ({ uriResolver }, opts) {
     super({ ...opts, objectMode: true })
     this.uriResolver = uriResolver
@@ -35,32 +35,29 @@ class ProduceDatasets extends Transform {
       ? object.entities.map(handleUndefined)
       : [{ term: rdf.literal(object.raw) }]
 
-    const dataset = rdf.dataset()
-
     for (const subject of subjects) {
       for (const predicate of predicates) {
         for (const object of objects) {
           const quad = rdf.quad(subject.term, predicate.term, object.term,
             documentIRI)
-          dataset.addAll([quad])
+          this.push(quad)
         }
       }
     }
 
-    const labels = x => {
-      return rdf.quad(x.term,
+    const labels = (x) => {
+      const { term, label } = x
+      return rdf.quad(term,
         rdf.namedNode('http://www.w3.org/2001/XMLSchema#label'),
-        rdf.literal(x.label)),
-        documentIRI
+        rdf.literal(label), documentIRI)
     }
-    dataset.addAll(subjects.filter(x=>x.label).map(labels))
-    dataset.addAll(predicates.filter(x=>x.label).map(labels))
-    dataset.addAll(objects.filter(x=>x.label).filter(x=>x.term.termType==='NamedNode').map(labels))
 
-    this.push(dataset)
+    subjects.filter(x=>x.label).map(x => labels(x)).forEach(quad=>this.push(quad))
+    predicates.filter(x=>x.label).map(labels).forEach(quad=>this.push(quad))
+    objects.filter(x=>x.label).filter(x=>x.term.termType==='NamedNode').map(labels).forEach(quad=>this.push(quad))
 
     callback()
   }
 }
 
-export { ProduceDatasets }
+export { ProduceQuads }

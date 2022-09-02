@@ -106,6 +106,8 @@ class ParseDotTriples extends Transform {
 
     if (type === 'yaml') {
       this.processYAML(value, header)
+    } else if(type === 'code'){
+      // @TODO implement something beautiful for turtle-publish
     } else {
       this.processPlainText(text, header)
     }
