@@ -1,12 +1,9 @@
-import pkg from 'glob'
 import { resolve } from 'path'
 import rdf from 'rdf-ext'
 import { createContext } from './src/context.js'
 import ns from './src/namespaces.js'
 import { createMarkdownPipeline } from './src/pipelines.js'
 import { prettyPrint } from './src/streams.js'
-
-const { Glob } = pkg
 
 const dir = './test/markdown/'
 // const dir = '../../../obsidian/workspace/'

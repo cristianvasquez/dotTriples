@@ -1,5 +1,6 @@
 import rdf from 'rdf-ext'
 import { Transform } from 'stream'
+import ns from '../namespaces.js'
 
 class ProduceQuads extends Transform {
   constructor ({ uriResolver }, opts) {
@@ -48,7 +49,7 @@ class ProduceQuads extends Transform {
     const labels = (x) => {
       const { term, label } = x
       return rdf.quad(term,
-        rdf.namedNode('http://www.w3.org/2001/XMLSchema#label'),
+        ns.rdf.label,
         rdf.literal(label), documentIRI)
     }
 
