@@ -49,7 +49,7 @@ class ProduceQuads extends Transform {
     const labels = (x) => {
       const { term, label } = x
       return rdf.quad(term,
-        ns.rdf.label,
+        ns.rdfs.label,
         rdf.literal(label), documentIRI)
     }
 

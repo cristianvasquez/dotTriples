@@ -1,11 +1,7 @@
 import { join, parse } from 'path'
 import { Transform } from 'stream'
 import { THIS, UNDEFINED } from '../consts.js'
-import {
-  MARKDOWN_LINKS_REGEXP,
-  MEDIAWIKI_LINKS_REGEXP,
-  URLS_REGEXP,
-} from '../regexp.js'
+import { hasUrl } from '../regexp.js'
 
 class DetectEntities extends Transform {
   constructor ({ uriResolver }, opts) {
@@ -16,10 +12,10 @@ class DetectEntities extends Transform {
   _transform (content, encoding, callback) {
     if (!content.exception) {
 
-      const { header: { path }, subject, predicate, object } = content
-      content.subject = setEntities(path, subject, this.uriResolver)
-      content.predicate = setEntities(path, predicate, this.uriResolver)
-      content.object = setEntities(path, object, this.uriResolver)
+      const { header: { path }, subject, predicate, object, links } = content
+      content.subject = setEntities(path, subject, this.uriResolver, links)
+      content.predicate = setEntities(path, predicate, this.uriResolver, links)
+      content.object = setEntities(path, object, this.uriResolver, links)
       this.push(content)
     } else {
       // What to do when there is an exception?
@@ -37,29 +33,8 @@ function trim (txt) {
   return txt.replace(/^\s+|\s+$/gm, '')
 }
 
-function getMarkdownLinks (text) {
-  const internalLinks = []
-  for (const match of text.matchAll(MARKDOWN_LINKS_REGEXP)) {
-    internalLinks.push(match[1].substring(1, match[1].length - 1))
-  }
-  return internalLinks
-}
-
-function getInternalWikiLinks (text) {
-  const internalLinks = []
-  for (const match of text.matchAll(MEDIAWIKI_LINKS_REGEXP)) {
-    internalLinks.push(match[1].substring(2, match[1].length - 2))
-  }
-  return internalLinks
-}
-
-function getURLs (text) {
-  const result = text.match(URLS_REGEXP)
-  return result ? result : []
-}
-
-function setEntities (path, term, uriResolver) {
-  term.raw = trim(term.raw)
+function setEntities (path, term, uriResolver, links) {
+  term.raw = trim(term.raw) // Remove  ::    leftover spaces -> 'leftover spaces'
   const entities = []
   if (term.raw === THIS) {
     const uri = uriResolver.getUriFromPath(path)
@@ -76,25 +51,40 @@ function setEntities (path, term, uriResolver) {
   } else {
 
     if (typeof term.raw === 'string' || term.raw instanceof String) {
-      for (const markdownLink of getMarkdownLinks(term.raw)) {
-        // @TODO lookup rules that apply for absolute paths
-        const { dir } = parse(path)
-        const targetPath = join(dir, trim(markdownLink))
-        const uri = uriResolver.getUriFromPath(targetPath)
-        entities.push({
-          uri:uri??uriResolver.fallbackUris.notFoundURI,
-        })
+      let text = term.raw
+
+      for (const mediaWikiLink of links.filter(
+        link => link.type === 'wikiLink')) {
+        if (text.includes(mediaWikiLink.text)) {
+          // A link to an [[Entity]]
+          const uri = uriResolver.getUriFromName(mediaWikiLink.value)
+          entities.push({
+            uri: uri ?? uriResolver.fallbackUris.notFoundURI,
+          })
+          text.replaceAll(mediaWikiLink.text, '')
+        }
       }
-      for (const name of getInternalWikiLinks(term.raw)) {
-        const uri = uriResolver.getUriFromName(trim(name))
-        entities.push({
-          uri:uri??uriResolver.fallbackUris.notFoundURI,
-        })
-      }
-      for (const url of getURLs(term.raw)) {
-        entities.push({
-          uri: uriResolver.namedNode(url),
-        })
+
+      for (const normalLink of links.filter(link => link.type === 'link' || link.type === 'image')) {
+        if (text.includes(normalLink.text)) {
+          const value = normalLink.url
+          if (hasUrl(value)) {
+            // [a link to a url](http://example.org)"
+            entities.push({
+              uri: uriResolver.namedNode(value),
+            })
+          } else {
+            // [a link to an entity](./entity.md)
+            const { dir } = parse(path)
+            const targetPath = join(dir, trim(value))
+            const uri = uriResolver.getUriFromPath(targetPath)
+            entities.push({
+              uri: uri ?? uriResolver.fallbackUris.notFoundURI,
+            })
+            text.replaceAll(normalLink.text, '')
+          }
+
+        }
       }
     }
   }

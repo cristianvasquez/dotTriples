@@ -25,7 +25,10 @@
     "rdf-ext": "^2.0.1",
     "readable-stream": "^4.1.0",
     "remark-frontmatter": "^4.0.1",
-    "remark-parse": "^10.0.1"
+    "remark-gfm": "^3.0.1",
+    "remark-parse": "^10.0.1",
+    "remark-wiki-link": "^1.0.4",
+    "unified": "^10.1.2"
   },
   "devDependencies": {
     "expect": "^28.1.1",

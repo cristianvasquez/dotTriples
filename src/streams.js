@@ -1,9 +1,8 @@
 import { turtle } from '@rdfjs-elements/formats-pretty/serializers'
 import getStream from 'get-stream'
-import { Readable } from 'readable-stream'
+import rdf from 'rdf-ext'
 import { PassThrough, Transform } from 'stream'
 import ns from './namespaces.js'
-import rdf from 'rdf-ext'
 
 function printJsons () {
   return createOutputStream({
@@ -84,5 +83,5 @@ export {
   printQuads,
   printCounts,
   createOutputStream,
-  prettyPrint
+  prettyPrint,
 }

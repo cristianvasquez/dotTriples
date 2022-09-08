@@ -3,10 +3,11 @@ import rdf from 'rdf-ext'
 import { createContext } from './src/context.js'
 import ns from './src/namespaces.js'
 import { createMarkdownPipeline } from './src/pipelines.js'
-import { prettyPrint } from './src/streams.js'
+import { prettyPrint, printCounts } from './src/streams.js'
 
 const dir = './test/markdown/'
 // const dir = '../../../obsidian/workspace/'
+// const dir = '../../../zazuko/wiki.wiki/'
 
 // Config
 const vault = rdf.namespace('http://example.org/')
@@ -18,6 +19,7 @@ const customMappers = {
 
 // Build pipelines
 const outputStream = await prettyPrint({ prefixes: { ex: vault } })
+// const outputStream = printCounts()
 const context = await createContext(
   { basePath: resolve(dir), baseNamespace: vault, mappers: customMappers })
 const inputStream = createMarkdownPipeline(context, outputStream)
