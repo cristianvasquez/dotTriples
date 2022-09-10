@@ -1,53 +1,20 @@
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted } from 'vue'
 import Glayout from './components/layout/Glayout.vue'
-import { miniRowLayout } from './layout/predefined-layouts'
+import { CONFIG, COUNTER, HOME } from './config.js'
+import { useLayoutStore } from './store/layout.js'
 
-const rootLayoutRef = ref(null)
+const store = useLayoutStore()
+const { rootLayoutRef } = storeToRefs(store)
+const { addInstance, saveCurrentLayout, loadCurrentLayout } = store
 
-const onClickInitLayoutMinRow = () => {
-  if (!rootLayoutRef.value) return
-  rootLayoutRef.value.loadGLLayout(miniRowLayout)
-}
 
-const components = [
-  {
-    componentType: 'LayoutConfig',
-    title: 'Layout config',
-  },
-  {
-    componentType: 'Content2',
-    title: 'Content 2',
-  },
-  {
-    componentType: 'Content3',
-    title: 'Content 3',
-  },
-]
-
-function addComponent(component){
-  if (!rootLayoutRef.value) return
-  rootLayoutRef.value.addGLComponent(component)
-}
-
-const onClickSaveLayout = () => {
-  if (!rootLayoutRef.value) return
-  const config = rootLayoutRef.value.getLayoutConfig()
-  localStorage.setItem('gl_config', JSON.stringify(config))
-
-}
-
-const onClickLoadLayout = () => {
-  const str = localStorage.getItem('gl_config')
-  if (!str) return
-  if (!rootLayoutRef.value) return
-  const config = JSON.parse(str)
-  rootLayoutRef.value.loadGLLayout(config)
-}
+const components = [HOME,CONFIG,COUNTER]
 
 onMounted(()=>{
-  onClickLoadLayout()
+  loadCurrentLayout()
 })
 
 </script>
@@ -55,15 +22,13 @@ onMounted(()=>{
 <template>
   <div class="full-height">
     <div id="nav">
-      <h1 >Playground</h1>
-      <button @click="onClickInitLayoutMinRow">Reset layout</button>
+      <h1>Playground</h1>
       <template v-for="component of components">
-        <button @click="addComponent(component)">
+        <button @click="addInstance(component)">
           {{ component.title }}
         </button>
       </template>
-      <button @click="onClickSaveLayout">Save Layout</button>
-      <button @click="onClickLoadLayout">Load Layout</button>
+
     </div>
     <glayout
         ref="rootLayoutRef"

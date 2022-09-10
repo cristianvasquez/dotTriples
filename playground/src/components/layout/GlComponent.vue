@@ -1,5 +1,5 @@
 <script setup>
-import { defineExpose, ref } from 'vue'
+import { ref } from 'vue'
 
 const GLComponent = ref(null)
 
