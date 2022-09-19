@@ -82,6 +82,5 @@ export {
   printJsons,
   printQuads,
   printCounts,
-  createOutputStream,
   prettyPrint,
 }

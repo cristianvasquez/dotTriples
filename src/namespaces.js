@@ -8,6 +8,7 @@ const ns = {
   foaf: rdf.namespace('http://xmlns.com/foaf/0.1/'),
   purl: rdf.namespace('http://purl.org/dc/terms/'),
   rdfs: rdf.namespace('http://www.w3.org/2000/01/rdf-schema#'),
+  ex: rdf.namespace('http://example.org/'),
 }
 
 export default ns
