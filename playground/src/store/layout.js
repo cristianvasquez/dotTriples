@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { miniRowLayout } from '../config.js'
 
 export const useLayoutStore = defineStore('layout-store', () => {
 
@@ -17,9 +18,11 @@ export const useLayoutStore = defineStore('layout-store', () => {
   }
 
   function loadCurrentLayout () {
-    const str = localStorage.getItem('gl_config')
-    if (!str) return
     if (!rootLayoutRef.value) return
+    const str = localStorage.getItem('gl_config')
+    if (!str) {
+      loadLayout(miniRowLayout)
+    }
     const config = JSON.parse(str)
     loadLayout(config)
   }

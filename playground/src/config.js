@@ -15,6 +15,11 @@ const COUNTER = {
   title: 'Counter',
 }
 
+const FILES = {
+  componentType: 'Files',
+  title: 'Files',
+}
+
 const miniRowLayout = {
   root: {
     type: ItemType.row,
@@ -38,4 +43,4 @@ const miniRowLayout = {
   },
 }
 
-export { miniRowLayout, HOME, CONFIG, COUNTER }
+export { miniRowLayout, HOME, CONFIG, COUNTER, FILES }

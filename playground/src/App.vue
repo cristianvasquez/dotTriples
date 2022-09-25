@@ -3,15 +3,14 @@
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
 import Glayout from './components/layout/Glayout.vue'
-import { CONFIG, COUNTER, HOME } from './config.js'
+import { CONFIG, COUNTER, HOME, FILES } from './config.js'
 import { useLayoutStore } from './store/layout.js'
 
 const store = useLayoutStore()
 const { rootLayoutRef } = storeToRefs(store)
-const { addInstance, saveCurrentLayout, loadCurrentLayout } = store
+const { addInstance, loadCurrentLayout } = store
 
-
-const components = [HOME,CONFIG,COUNTER]
+const components = [HOME, CONFIG, COUNTER, FILES]
 
 onMounted(()=>{
   loadCurrentLayout()
@@ -28,7 +27,6 @@ onMounted(()=>{
           {{ component.title }}
         </button>
       </template>
-
     </div>
     <glayout
         ref="rootLayoutRef"
