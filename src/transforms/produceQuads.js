@@ -1,69 +1,165 @@
+import { join, parse } from 'path'
 import rdf from 'rdf-ext'
 import { Transform } from 'stream'
-import ns from '../namespaces.js'
+import { RELATION_WITH_NO_TYPE, THIS } from '../consts.js'
+import { hasUrl } from '../regexp.js'
 
 class ProduceQuads extends Transform {
-  constructor ({ uriResolver, quadProducers }, opts) {
+  constructor ({ uriResolver }, opts) {
     super({ ...opts, objectMode: true })
     this.uriResolver = uriResolver
   }
 
+  getTerm ({ entity, path, fallbackAsLiteral = false }) {
+    if (entity.token === THIS) {
+      return this.uriResolver.getUriFromPath(path)
+    }
+    if (entity.type === 'internalNameLink') {
+      return this.uriResolver.getUriFromName(entity.name)
+    }
+    if (entity.type === 'internalPathLink') {
+      return this.uriResolver.getUriFromPath(entity.path)
+    }
+    if (entity.type === 'externalLink') {
+      return this.uriResolver.namedNode(entity.url)
+    }
+
+    if (entity.raw) {
+      return fallbackAsLiteral
+        ? this.uriResolver.literal(trim(entity.raw))
+        : this.uriResolver.buildPropertyFromText(trim(entity.raw))
+    }
+
+    console.log(entity)
+    throw Error('Cannot interpret', entity)
+
+  }
+
+  withFallback (uri) {
+    return uri ? uri : this.uriResolver.fallbackUris.notFoundURI
+  }
+
   _transform (content, encoding, callback) {
+    if (!content.exception) {
 
-    const { header, subject, predicate, object } = content
+      const { header: { path }, subject, predicate, object, links } = content
 
-    const documentIRI = this.uriResolver.getUriFromPath(header.path)
+      const inSubject = getEntities({ path, raw: subject.raw, links })
+      const inPredicate = getEntities({ path, raw: predicate.raw, links })
+      const inObject = getEntities({ path, raw: object.raw, links })
 
-    const propertyFromRaw = (raw) => {
-      return {
-        term: this.uriResolver.buildPropertyFromText(raw),
-        raw,
-      }
-    }
-    const uriOrLiteral = (x) => {
-      return x.uri
-        ? { term: x.uri, raw: x.name }
-        : { term: rdf.literal(x.name), raw: x.name }
-    }
+      const documentIRI = this.uriResolver.getUriFromPath(path)
 
-    const subjects = subject.entities
-      ? subject.entities.map(uriOrLiteral)
-      : [propertyFromRaw(subject.raw)]
-    const predicates = predicate.entities
-      ? predicate.entities.map(uriOrLiteral)
-      : [propertyFromRaw(predicate.raw)]
-    const objects = object.entities
-      ? object.entities.map(uriOrLiteral)
-      : [{ term: rdf.literal(object.raw) }]
+      // Subjects and predicates are always URIs, Objects can be either URI or Literal
+      for (const s of inSubject) {
+        for (const p of inPredicate) {
+          for (const o of inObject) {
 
-    for (const subject of subjects) {
-      for (const predicate of predicates) {
-        for (const object of objects) {
-          const quad = rdf.quad(subject.term, predicate.term, object.term,
-            documentIRI)
-          this.push(quad)
+            // console.log(s, p, o, content.raw)
+
+            const subjectTerm = this.getTerm({ entity: s, path })
+
+            let predicateTerm = ''
+            if (p.token === RELATION_WITH_NO_TYPE) {
+              if (o.type === 'internalLink') {
+                predicateTerm = this.uriResolver.fallbackUris.noTypeInternal
+              } else if (o.type === 'internalNameLink' || o.type ===
+                'internalPathLink') {
+                predicateTerm = this.uriResolver.fallbackUris.noTypeExternal
+              } else {
+                predicateTerm = this.uriResolver.fallbackUris.noType
+              }
+            } else {
+              predicateTerm = this.getTerm({ entity: p, path })
+            }
+
+            const objectTerm = this.getTerm(
+              { entity: o, path, fallbackAsLiteral: true })
+
+            const quad = rdf.quad(this.withFallback(subjectTerm),
+              this.withFallback(predicateTerm), this.withFallback(objectTerm),
+              documentIRI)
+            this.push(quad)
+
+          }
         }
       }
-    }
 
-    const labels = (x) => {
-      const { term, raw } = x
-      return rdf.quad(term,
-        ns.rdfs.label,
-        rdf.literal(raw), documentIRI)
+    } else {
+      // What to do when there is an exception?
     }
-
-    subjects.filter(x => x.raw).
-      map(x => labels(x)).
-      forEach(quad => this.push(quad))
-    predicates.filter(x => x.raw).map(labels).forEach(quad => this.push(quad))
-    objects.filter(x => x.raw).
-      filter(x => x.term.termType === 'NamedNode').
-      map(labels).
-      forEach(quad => this.push(quad))
 
     callback()
   }
+}
+
+function trim (txt) {
+  return txt.replace(/^\s+|\s+$/gm, '')
+}
+
+function isString (str) {
+  return (typeof str === 'string' || str instanceof String)
+}
+
+function getEntities ({ path, raw, links }) {
+  const entities = []
+  if (!isString(raw)) {
+    return entities
+  }
+  let text = trim(raw)
+  if (text.includes(THIS)) {
+    entities.push({
+      token: THIS,
+    })
+    text.replaceAll(THIS, '')
+  }
+
+  if (text.includes(RELATION_WITH_NO_TYPE)) {
+    entities.push({
+      token: RELATION_WITH_NO_TYPE,
+    })
+    text.replaceAll(RELATION_WITH_NO_TYPE, '')
+  }
+
+  for (const mediaWikiLink of links.filter(
+    link => link.type === 'wikiLink')) {
+    if (text.includes(mediaWikiLink.text)) {
+      entities.push({
+        type: 'internalNameLink',
+        name: mediaWikiLink.value,
+      })
+      text.replaceAll(mediaWikiLink.text, '')
+    }
+  }
+
+  for (const normalLink of links.filter(
+    link => link.type === 'link' || link.type === 'image')) {
+    if (text.includes(normalLink.text)) {
+      const value = normalLink.url
+      if (hasUrl(value)) {
+        // [a link to a url](http://example.org)"
+        entities.push({
+          type: 'externalLink',
+          url: value,
+        })
+      } else {
+        // [a link to an entity](./entity.md)
+        const { dir } = parse(path)
+        const targetPath = join(dir, trim(value))
+        entities.push({
+          type: 'internalPathLink',
+          path: targetPath,
+        })
+        text.replaceAll(normalLink.text, '')
+      }
+    }
+  }
+
+  if (entities.length) {
+    return entities
+  }
+
+  return [{ raw }]
 }
 
 export { ProduceQuads }

@@ -70,8 +70,9 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
     namedNode: rdf.namedNode,
     literal: rdf.literal,
     fallbackUris: {
-      hasUndefinedExternal: baseNamespace['has-url'],
-      hasUndefinedInternal: baseNamespace['related-to'],
+      noTypeExternal: baseNamespace['has-url'],
+      noTypeInternal: baseNamespace['linked-to'],
+      noType: baseNamespace['related-to'],
       notFoundURI: baseNamespace['not-found-in-vault'],
     },
     buildPropertyFromText: (text) => buildPropertyFromText(text,

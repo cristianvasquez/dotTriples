@@ -1,6 +1,6 @@
 import yaml from 'js-yaml'
 import { Transform } from 'stream'
-import { COMMENTED_DOTDOT, DOTDOT, THIS, UNDEFINED } from '../consts.js'
+import { COMMENTED_DOTDOT, DOTDOT, THIS, RELATION_WITH_NO_TYPE } from '../consts.js'
 
 const PLACEHOLDER = '5de1049b-559f-42e2-8279-ea0c7cfa8f40'
 
@@ -17,7 +17,7 @@ class ParseDotTriples extends Transform {
         links,
         raw: text,
         subject: { raw: THIS },
-        predicate: { raw: UNDEFINED },
+        predicate: { raw: RELATION_WITH_NO_TYPE },
         object: { raw: text },
       })
     }

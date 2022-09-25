@@ -58,11 +58,11 @@ class ParseMarkdown extends Transform {
       })
 
       this.push({
-        header,
-        type,
-        text,
-        value,
-        links,
+        header, // Traceability of the source
+        type, // AST node type
+        text, // Text in the source
+        value, // results of the parsing
+        links, // found links
       })
     }
     callback()

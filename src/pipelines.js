@@ -2,7 +2,6 @@ import { createReadStream } from 'fs'
 import { resolve } from 'path'
 import { Transform } from 'stream'
 import { createMarkdownParser } from './markdownParser.js'
-import { DetectEntities } from './transforms/detectEntities.js'
 import { ParseDotTriples } from './transforms/parseDotTriples.js'
 import { ParseMarkdown } from './transforms/parseMarkdown.js'
 import { ProduceQuads } from './transforms/produceQuads.js'
@@ -16,10 +15,9 @@ function createMarkdownPipeline ({ basePath, uriResolver, quadProducers }, destS
       const fileStream = createReadStream(filePath).
         pipe(new ParseMarkdown({ markdownParser }, { path }, {})).
         pipe(new ParseDotTriples()).
-        pipe(new DetectEntities({ uriResolver }, {})).
         pipe(new ProduceQuads({ uriResolver, quadProducers }, {}))
 
-      fileStream.pipe(destStream, { end: false })
+        fileStream.pipe(destStream, { end: false })
       fileStream.on('new', (item) => {
         console.log('item', item)
       })
