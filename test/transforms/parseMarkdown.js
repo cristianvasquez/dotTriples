@@ -20,7 +20,7 @@ const files = ['links.md']
 const basePath = 'test/transforms/support'
 const markdownParser = createMarkdownParser()
 
-describe('[parseMarkdown.js]', async function () {
+describe('[pipelines.js]', async function () {
 
   files.forEach((current) => {
     it(`"${current}"`, async function () {

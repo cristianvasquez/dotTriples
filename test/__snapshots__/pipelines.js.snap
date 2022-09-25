@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[MarkdownPipeline] "./Alice.md" 1`] = `
+"<http://example.org/Alice.md> <http://example.org/has-url> <http://example.org/not-found-in-vault> <http://example.org/Alice.md> .
+<http://example.org/Alice.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"Alice\\" <http://example.org/Alice.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./Yaml.md" 1`] = `
+"<http://example.org/Yaml.md> <http://example.org/date-updated> \\"2021-08-05T17:10:34+02:00\\" <http://example.org/Yaml.md> .
+<http://example.org/Yaml.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"Yaml\\" <http://example.org/Yaml.md> .
+<http://example.org/Yaml.md> <http://example.org/tags> \\"cats\\" <http://example.org/Yaml.md> .
+<http://example.org/Yaml.md> <http://example.org/tags> \\"dogs\\" <http://example.org/Yaml.md> .
+<http://example.org/Yaml.md> <http://example.org/one> \\"Two\\" <http://example.org/Yaml.md> .
+<http://example.org/date-updated> <http://www.w3.org/2000/01/rdf-schema#label> \\"date updated\\" <http://example.org/Yaml.md> .
+<http://example.org/tags> <http://www.w3.org/2000/01/rdf-schema#label> \\"tags\\" <http://example.org/Yaml.md> .
+<http://example.org/one> <http://www.w3.org/2000/01/rdf-schema#label> \\"one\\" <http://example.org/Yaml.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./bob/Bob.md" 1`] = `
+"<http://example.org/bob/Bob.md> <http://example.org/age> \\"44\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"Bob\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/website> <http://bob.org> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://xmlns.com/foaf/0.1/knows> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-url> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-url> <http://example.org/bob/BobHouse.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-relative> <http://example.org/folder/Test.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-image> <http://example.org/folder/img.png> <http://example.org/bob/Bob.md> .
+<http://example.org/age> <http://www.w3.org/2000/01/rdf-schema#label> \\"age\\" <http://example.org/bob/Bob.md> .
+<http://example.org/website> <http://www.w3.org/2000/01/rdf-schema#label> \\"website\\" <http://example.org/bob/Bob.md> .
+<http://bob.org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"WeBsiTe\\" <http://example.org/bob/Bob.md> .
+<http://xmlns.com/foaf/0.1/knows> <http://www.w3.org/2000/01/rdf-schema#label> \\"foaf:knows\\" <http://example.org/bob/Bob.md> .
+<http://example.org/has-relative> <http://www.w3.org/2000/01/rdf-schema#label> \\"has relative\\" <http://example.org/bob/Bob.md> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#label> \\"is a\\" <http://example.org/bob/Bob.md> .
+<http://example.org/has-image> <http://www.w3.org/2000/01/rdf-schema#label> \\"has image\\" <http://example.org/bob/Bob.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./bob/BobHouse.md" 1`] = `
+"<http://example.org/bob/BobHouse.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"House\\" <http://example.org/bob/BobHouse.md> .
+<http://example.org/bob/BobHouse.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"BobHouse\\" <http://example.org/bob/BobHouse.md> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#label> \\"is a\\" <http://example.org/bob/BobHouse.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./folder/Test.md" 1`] = `
+"<http://example.org/folder/Test.md> <http://example.org/has-url> <http://example.org/not-found-in-vault> <http://example.org/folder/Test.md> .
+<http://example.org/folder/Test.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"Test\\" <http://example.org/folder/Test.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./hello.md" 1`] = `
+"<http://example.org/hello.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/not-found-in-vault> <http://example.org/hello.md> .
+<http://example.org/hello.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"hello\\" <http://example.org/hello.md> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#label> \\"is a\\" <http://example.org/hello.md> .
+<http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#label> \\"are\\" <http://example.org/hello.md> .
+<http://example.org/bob/Bob.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/not-found-in-vault> <http://example.org/hello.md> .
+<http://example.org/Alice.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/not-found-in-vault> <http://example.org/hello.md> .
+<http://bob.org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"WeBsiTe\\" <http://example.org/hello.md> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./world.md" 1`] = `
+"<http://example.org/world.md> <http://example.org/property> \\"value\\" <http://example.org/world.md> .
+<http://example.org/world.md> <http://www.w3.org/2000/01/rdf-schema#label> \\"world\\" <http://example.org/world.md> .
+<http://example.org/world.md> <http://example.org/hello.md> <http://example.org/Yaml.md> <http://example.org/world.md> .
+<http://example.org/property> <http://www.w3.org/2000/01/rdf-schema#label> \\"property\\" <http://example.org/world.md> .
+<http://example.org/subject2> <http://www.w3.org/2000/01/rdf-schema#label> \\"subject2\\" <http://example.org/world.md> .
+<http://example.org/subject2> <http://example.org/property2> \\"value2\\" <http://example.org/world.md> .
+<http://example.org/property2> <http://www.w3.org/2000/01/rdf-schema#label> \\"property2\\" <http://example.org/world.md> .
+"
+`;
