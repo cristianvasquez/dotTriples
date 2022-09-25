@@ -70,7 +70,8 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
     namedNode: rdf.namedNode,
     literal: rdf.literal,
     fallbackUris: {
-      undefinedProperty: baseNamespace['related-to'],
+      hasUndefinedExternal: baseNamespace['has-url'],
+      hasUndefinedInternal: baseNamespace['related-to'],
       notFoundURI: baseNamespace['not-found-in-vault'],
     },
     buildPropertyFromText: (text) => buildPropertyFromText(text,
@@ -82,11 +83,11 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
   }
 }
 
-async function createContext ({ basePath, mappers, baseNamespace }) {
+async function createContext ({ basePath, mappers, baseNamespace, quadProducers }) {
   const index = await findFiles(basePath)
   const uriResolver = createUriResolver(
     { index, mappers, baseNamespace: baseNamespace ?? DEFAULT_NAMESPACE })
-  return { basePath, index, uriResolver }
+  return { basePath, index, uriResolver, quadProducers }
 }
 
 export {

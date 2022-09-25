@@ -4,7 +4,7 @@ import rdf from 'rdf-ext'
 import { PassThrough, Transform } from 'stream'
 import ns from './namespaces.js'
 
-function printJsons () {
+function createJsonPrinter () {
   return createOutputStream({
     forEach: (chunk => {
       console.log(JSON.stringify(chunk, null, 2))
@@ -12,7 +12,7 @@ function printJsons () {
   })
 }
 
-function printQuads () {
+function createQuadPrinter () {
   return createOutputStream({
     forEach: (chunk => {
       console.log(chunk.toString())
@@ -20,7 +20,7 @@ function printQuads () {
   })
 }
 
-function printCounts () {
+function createCounter () {
   return new Transform({
     objectMode: true,
     write (chunk, encoding, callback) {
@@ -34,7 +34,7 @@ function printCounts () {
   })
 }
 
-async function prettyPrint ({ prefixes } = {}) {
+async function createPrettyPrinter ({ prefixes = {} }) {
 
   function toPlain () {
     const result = {}
@@ -58,7 +58,7 @@ async function prettyPrint ({ prefixes } = {}) {
       callback()
     },
     async flush (callback) {
-      const dataset = rdf.dataset().addAll(this.quads) // Trick to remove duplicates
+      const dataset = rdf.dataset().addAll(this.quads ?? []) // Trick to remove duplicates
       const stream = await sink.import(dataset.toStream())
       const result = await getStream(stream)
       console.log(result)
@@ -79,8 +79,8 @@ function createOutputStream ({ forEach } = { forEach: x => x }) {
 }
 
 export {
-  printJsons,
-  printQuads,
-  printCounts,
-  prettyPrint,
+  createJsonPrinter,
+  createQuadPrinter,
+  createCounter,
+  createPrettyPrinter,
 }

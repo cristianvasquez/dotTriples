@@ -3,7 +3,7 @@ import { Transform } from 'stream'
 import ns from '../namespaces.js'
 
 class ProduceQuads extends Transform {
-  constructor ({ uriResolver }, opts) {
+  constructor ({ uriResolver, quadProducers }, opts) {
     super({ ...opts, objectMode: true })
     this.uriResolver = uriResolver
   }
@@ -17,23 +17,23 @@ class ProduceQuads extends Transform {
     const propertyFromRaw = (raw) => {
       return {
         term: this.uriResolver.buildPropertyFromText(raw),
-        label: raw,
+        raw,
       }
     }
-    const handleUndefined = (x) => {
+    const uriOrLiteral = (x) => {
       return x.uri
-        ? { term: x.uri, label: x.name }
-        : { term: rdf.literal(x.name) }
+        ? { term: x.uri, raw: x.name }
+        : { term: rdf.literal(x.name), raw: x.name }
     }
 
     const subjects = subject.entities
-      ? subject.entities.map(handleUndefined)
+      ? subject.entities.map(uriOrLiteral)
       : [propertyFromRaw(subject.raw)]
     const predicates = predicate.entities
-      ? predicate.entities.map(handleUndefined)
+      ? predicate.entities.map(uriOrLiteral)
       : [propertyFromRaw(predicate.raw)]
     const objects = object.entities
-      ? object.entities.map(handleUndefined)
+      ? object.entities.map(uriOrLiteral)
       : [{ term: rdf.literal(object.raw) }]
 
     for (const subject of subjects) {
@@ -47,15 +47,20 @@ class ProduceQuads extends Transform {
     }
 
     const labels = (x) => {
-      const { term, label } = x
+      const { term, raw } = x
       return rdf.quad(term,
         ns.rdfs.label,
-        rdf.literal(label), documentIRI)
+        rdf.literal(raw), documentIRI)
     }
 
-    subjects.filter(x=>x.label).map(x => labels(x)).forEach(quad=>this.push(quad))
-    predicates.filter(x=>x.label).map(labels).forEach(quad=>this.push(quad))
-    objects.filter(x=>x.label).filter(x=>x.term.termType==='NamedNode').map(labels).forEach(quad=>this.push(quad))
+    subjects.filter(x => x.raw).
+      map(x => labels(x)).
+      forEach(quad => this.push(quad))
+    predicates.filter(x => x.raw).map(labels).forEach(quad => this.push(quad))
+    objects.filter(x => x.raw).
+      filter(x => x.term.termType === 'NamedNode').
+      map(labels).
+      forEach(quad => this.push(quad))
 
     callback()
   }

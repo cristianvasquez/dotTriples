@@ -8,7 +8,7 @@ import { ParseMarkdown } from './transforms/parseMarkdown.js'
 import { ProduceQuads } from './transforms/produceQuads.js'
 
 // Expects markdown files, and produces triples
-function createMarkdownPipeline ({ basePath, uriResolver }, destStream) {
+function createMarkdownPipeline ({ basePath, uriResolver, quadProducers }, destStream) {
   const markdownParser = createMarkdownParser()
   const transform = new Transform({
     objectMode: true, transform (path, enc, done) {
@@ -17,7 +17,7 @@ function createMarkdownPipeline ({ basePath, uriResolver }, destStream) {
         pipe(new ParseMarkdown({ markdownParser }, { path }, {})).
         pipe(new ParseDotTriples()).
         pipe(new DetectEntities({ uriResolver }, {})).
-        pipe(new ProduceQuads({ uriResolver }, {}))
+        pipe(new ProduceQuads({ uriResolver, quadProducers }, {}))
 
       fileStream.pipe(destStream, { end: false })
       fileStream.on('new', (item) => {

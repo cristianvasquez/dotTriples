@@ -13,9 +13,13 @@ class DetectEntities extends Transform {
     if (!content.exception) {
 
       const { header: { path }, subject, predicate, object, links } = content
-      content.subject = setEntities(path, subject, this.uriResolver, links)
-      content.predicate = setEntities(path, predicate, this.uriResolver, links)
-      content.object = setEntities(path, object, this.uriResolver, links)
+
+      // This needs to change. It needs to create the triples right now.
+      // The class must change to detect triples
+
+      content.subject = detectEntities(path, subject, this.uriResolver, links)
+      content.predicate = detectEntities(path, predicate, this.uriResolver, links)
+      content.object = detectEntities(path, object, this.uriResolver, links)
       this.push(content)
     } else {
       // What to do when there is an exception?
@@ -33,7 +37,7 @@ function trim (txt) {
   return txt.replace(/^\s+|\s+$/gm, '')
 }
 
-function setEntities (path, term, uriResolver, links) {
+function detectEntities (path, term, uriResolver, links) {
   term.raw = trim(term.raw) // Remove  ::    leftover spaces -> 'leftover spaces'
   const entities = []
   if (term.raw === THIS) {
@@ -46,7 +50,7 @@ function setEntities (path, term, uriResolver, links) {
     term.raw = `[[${name}]]`
   } else if (term.raw === UNDEFINED) {
     entities.push({
-      uri: uriResolver.fallbackUris.undefinedProperty,
+      uri: uriResolver.fallbackUris.hasUndefinedExternal,
     })
   } else {
 
