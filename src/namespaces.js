@@ -9,6 +9,7 @@ const ns = {
   purl: rdf.namespace('http://purl.org/dc/terms/'),
   rdfs: rdf.namespace('http://www.w3.org/2000/01/rdf-schema#'),
   ex: rdf.namespace('http://example.org/'),
+  dot: rdf.namespace('http://dottriples.org/'),
 }
 
 export default ns
