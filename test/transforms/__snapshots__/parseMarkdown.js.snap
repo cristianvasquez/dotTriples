@@ -1,259 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[parseMarkdown.js] "links.md" 1`] = `
-Array [
-  Object {
-    "header": Object {
-      "endOffset": 17,
-      "startOffset": 0,
-    },
-    "links": Array [],
-    "text": "## Markdown links",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 56,
-      "startOffset": 19,
-    },
-    "links": Array [
-      Object {
-        "text": "[a link to a url](http://example.org)",
-        "title": null,
-        "type": "link",
-        "url": "http://example.org",
-      },
-    ],
-    "text": "[a link to a url](http://example.org)",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 92,
-      "startOffset": 58,
-    },
-    "links": Array [
-      Object {
-        "text": "[a link to an entity](./entity.md)",
-        "title": null,
-        "type": "link",
-        "url": "./entity.md",
-      },
-    ],
-    "text": "[a link to an entity](./entity.md)",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 112,
-      "startOffset": 94,
-    },
-    "links": Array [],
-    "text": "## Wikimedia links",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 137,
-      "startOffset": 114,
-    },
-    "links": Array [
-      Object {
-        "data": Object {
-          "alias": "Entity",
-          "exists": false,
-          "hChildren": Array [
-            Object {
-              "type": "text",
-              "value": "Entity",
-            },
-          ],
-          "hName": "a",
-          "hProperties": Object {
-            "className": "internal new",
-            "href": "#/page/entity",
-          },
-          "permalink": "entity",
-        },
-        "text": "[[Entity]]",
-        "type": "wikiLink",
-        "value": "Entity",
-      },
-    ],
-    "text": "A link to an [[Entity]]",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 154,
-      "startOffset": 139,
-    },
-    "links": Array [],
-    "text": "## Markdown url",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 176,
-      "startOffset": 156,
-    },
-    "links": Array [
-      Object {
-        "text": "<http://example.org>",
-        "title": null,
-        "type": "link",
-        "url": "http://example.org",
-      },
-    ],
-    "text": "<http://example.org>",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 186,
-      "startOffset": 178,
-    },
-    "links": Array [],
-    "text": "## Lists",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 212,
-      "startOffset": 188,
-    },
-    "links": Array [
-      Object {
-        "data": Object {
-          "alias": "Entity",
-          "exists": false,
-          "hChildren": Array [
-            Object {
-              "type": "text",
-              "value": "Entity",
-            },
-          ],
-          "hName": "a",
-          "hProperties": Object {
-            "className": "internal new",
-            "href": "#/page/entity",
-          },
-          "permalink": "entity",
-        },
-        "text": "[[Entity]]",
-        "type": "wikiLink",
-        "value": "Entity",
-      },
-    ],
-    "text": "- Hello
-    - [[Entity]]",
-    "type": "list",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 225,
-      "startOffset": 214,
-    },
-    "links": Array [],
-    "text": "## An image",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 260,
-      "startOffset": 227,
-    },
-    "links": Array [
-      Object {
-        "text": "[Lovely image](../folder/img.png)",
-        "title": null,
-        "type": "link",
-        "url": "../folder/img.png",
-      },
-    ],
-    "text": "[Lovely image](../folder/img.png)",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 284,
-      "startOffset": 263,
-    },
-    "links": Array [],
-    "text": "## With transclusion ",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 320,
-      "startOffset": 286,
-    },
-    "links": Array [
-      Object {
-        "alt": "Lovely image",
-        "text": "![Lovely image](../folder/img.png)",
-        "title": null,
-        "type": "image",
-        "url": "../folder/img.png",
-      },
-    ],
-    "text": "![Lovely image](../folder/img.png)",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 360,
-      "startOffset": 322,
-    },
-    "links": Array [
-      Object {
-        "alt": "a link to a url",
-        "text": "![a link to a url](http://example.org)",
-        "title": null,
-        "type": "image",
-        "url": "http://example.org",
-      },
-    ],
-    "text": "![a link to a url](http://example.org)",
-    "type": "paragraph",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 393,
-      "startOffset": 362,
-    },
-    "links": Array [],
-    "text": "### (currently not implemented)",
-    "type": "heading",
-    "value": undefined,
-  },
-  Object {
-    "header": Object {
-      "endOffset": 417,
-      "startOffset": 395,
-    },
-    "links": Array [],
-    "text": "![[TranscludedEntity]]",
-    "type": "paragraph",
-    "value": undefined,
-  },
-]
-`;
-
 exports[`[pipelines.js] "links.md" 1`] = `
 Array [
   Object {
@@ -354,25 +100,66 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 176,
+      "endOffset": 191,
       "startOffset": 156,
     },
     "links": Array [
       Object {
-        "text": "<http://example.org>",
+        "text": "<http://web2.org>",
         "title": null,
         "type": "link",
-        "url": "http://example.org",
+        "url": "http://web2.org",
+      },
+      Object {
+        "text": "<http://web1.org>",
+        "title": null,
+        "type": "link",
+        "url": "http://web1.org",
       },
     ],
-    "text": "<http://example.org>",
+    "text": "<http://web1.org>
+<http://web2.org>",
     "type": "paragraph",
     "value": undefined,
   },
   Object {
     "header": Object {
-      "endOffset": 186,
-      "startOffset": 178,
+      "endOffset": 206,
+      "startOffset": 193,
+    },
+    "links": Array [],
+    "text": "## Simple url",
+    "type": "heading",
+    "value": undefined,
+  },
+  Object {
+    "header": Object {
+      "endOffset": 239,
+      "startOffset": 208,
+    },
+    "links": Array [
+      Object {
+        "text": "http://web4.org",
+        "title": null,
+        "type": "link",
+        "url": "http://web4.org",
+      },
+      Object {
+        "text": "http://web3.org",
+        "title": null,
+        "type": "link",
+        "url": "http://web3.org",
+      },
+    ],
+    "text": "http://web3.org
+http://web4.org",
+    "type": "paragraph",
+    "value": undefined,
+  },
+  Object {
+    "header": Object {
+      "endOffset": 249,
+      "startOffset": 241,
     },
     "links": Array [],
     "text": "## Lists",
@@ -381,8 +168,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 212,
-      "startOffset": 188,
+      "endOffset": 275,
+      "startOffset": 251,
     },
     "links": Array [
       Object {
@@ -414,8 +201,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 225,
-      "startOffset": 214,
+      "endOffset": 288,
+      "startOffset": 277,
     },
     "links": Array [],
     "text": "## An image",
@@ -424,8 +211,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 260,
-      "startOffset": 227,
+      "endOffset": 323,
+      "startOffset": 290,
     },
     "links": Array [
       Object {
@@ -441,8 +228,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 284,
-      "startOffset": 263,
+      "endOffset": 347,
+      "startOffset": 326,
     },
     "links": Array [],
     "text": "## With transclusion ",
@@ -451,8 +238,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 320,
-      "startOffset": 286,
+      "endOffset": 383,
+      "startOffset": 349,
     },
     "links": Array [
       Object {
@@ -469,8 +256,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 360,
-      "startOffset": 322,
+      "endOffset": 423,
+      "startOffset": 385,
     },
     "links": Array [
       Object {
@@ -487,8 +274,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 393,
-      "startOffset": 362,
+      "endOffset": 456,
+      "startOffset": 425,
     },
     "links": Array [],
     "text": "### (currently not implemented)",
@@ -497,8 +284,8 @@ Array [
   },
   Object {
     "header": Object {
-      "endOffset": 417,
-      "startOffset": 395,
+      "endOffset": 480,
+      "startOffset": 458,
     },
     "links": Array [],
     "text": "![[TranscludedEntity]]",

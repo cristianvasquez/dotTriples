@@ -30,7 +30,7 @@ class ProduceQuads extends Transform {
         : this.uriResolver.buildPropertyFromText(trim(entity.raw))
     }
 
-    console.log(entity)
+    console.error(entity)
     throw Error('Cannot interpret', entity)
 
   }
@@ -44,6 +44,8 @@ class ProduceQuads extends Transform {
 
       const { header: { path }, subject, predicate, object, links } = content
 
+      // console.log('links',links)
+
       const inSubject = getEntities({ path, raw: subject.raw, links })
       const inPredicate = getEntities({ path, raw: predicate.raw, links })
       const inObject = getEntities({ path, raw: object.raw, links })
@@ -56,16 +58,15 @@ class ProduceQuads extends Transform {
           for (const o of inObject) {
 
             // console.log(s, p, o, content.raw)
-
             const subjectTerm = this.getTerm({ entity: s, path })
 
             let predicateTerm = ''
             if (p.token === RELATION_WITH_NO_TYPE) {
-              if (o.type === 'internalLink') {
-                predicateTerm = this.uriResolver.fallbackUris.noTypeInternal
+              if (o.type === 'externalLink') {
+                predicateTerm = this.uriResolver.fallbackUris.noTypeExternal
               } else if (o.type === 'internalNameLink' || o.type ===
                 'internalPathLink') {
-                predicateTerm = this.uriResolver.fallbackUris.noTypeExternal
+                predicateTerm = this.uriResolver.fallbackUris.noTypeInternal
               } else {
                 predicateTerm = this.uriResolver.fallbackUris.noType
               }
@@ -132,25 +133,24 @@ function getEntities ({ path, raw, links }) {
     }
   }
 
-  for (const normalLink of links.filter(
+  for (const link of links.filter(
     link => link.type === 'link' || link.type === 'image')) {
-    if (text.includes(normalLink.text)) {
-      const value = normalLink.url
-      if (hasUrl(value)) {
+    if (text.includes(link.url)) {
+      if (hasUrl(link.url)) {
         // [a link to a url](http://example.org)"
         entities.push({
           type: 'externalLink',
-          url: value,
+          url: link.url,
         })
       } else {
         // [a link to an entity](./entity.md)
         const { dir } = parse(path)
-        const targetPath = join(dir, trim(value))
+        const targetPath = join(dir, trim(link.url))
         entities.push({
           type: 'internalPathLink',
           path: targetPath,
         })
-        text.replaceAll(normalLink.text, '')
+        text.replaceAll(link.url, '')
       }
     }
   }

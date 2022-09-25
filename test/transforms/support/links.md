@@ -10,7 +10,13 @@ A link to an [[Entity]]
 
 ## Markdown url
 
-<http://example.org>
+<http://web1.org>
+<http://web2.org>
+
+## Simple url
+
+http://web3.org
+http://web4.org
 
 ## Lists
 
