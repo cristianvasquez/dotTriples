@@ -41,7 +41,7 @@ class ProduceQuads extends Transform {
   _transform (content, encoding, callback) {
     if (!content.exception) {
 
-      const { header: { path }, subject, predicate, object, links } = content
+      const { header: { path, counter }, subject, predicate, object, links } = content
 
       // console.log('links',links)
 
@@ -49,7 +49,7 @@ class ProduceQuads extends Transform {
       const inPredicate = getEntities({ path, raw: predicate.raw, links })
       const inObject = getEntities({ path, raw: object.raw, links })
 
-      const documentIRI = this.uriResolver.getUriFromPath(path)
+      const namedGraph = rdf.namedNode(`${this.uriResolver.getUriFromPath(path).value}/${counter}`)
 
       if (content.raw && content.raw !== '') {
         // Subjects and predicates are always URIs, Objects can be either URI or Literal
@@ -83,7 +83,7 @@ class ProduceQuads extends Transform {
                 const quad = rdf.quad(this.withFallback(subjectTerm),
                   this.withFallback(predicateTerm),
                   this.withFallback(objectTerm),
-                  documentIRI)
+                  namedGraph)
                 this.push(quad)
               }
 

@@ -8,6 +8,7 @@ class ParseMarkdown extends Transform {
     super({ ...opts, objectMode: true })
     this.markdownParser = markdownParser
     this.header = header
+    this.counter = 0
   }
 
   collectChilds (parent, data = []) {
@@ -57,8 +58,9 @@ class ParseMarkdown extends Transform {
         return result
       })
 
+      this.counter = this.counter + 1
       this.push({
-        header, // Traceability of the source
+        header: { ...header, counter: this.counter }, // Traceability of the source
         type, // AST node type
         text, // Text in the source
         value, // results of the parsing

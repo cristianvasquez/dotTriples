@@ -1,4 +1,4 @@
-import { turtle } from '@rdfjs-elements/formats-pretty/serializers'
+import { trig } from '@rdfjs-elements/formats-pretty/serializers'
 import getStream from 'get-stream'
 import rdf from 'rdf-ext'
 import { PassThrough, Transform } from 'stream'
@@ -44,7 +44,7 @@ async function createPrettyPrinter ({ prefixes = {} }) {
     return result
   }
 
-  const sink = await turtle({
+  const sink = await trig({
     prefixes: toPlain(),
   })
 

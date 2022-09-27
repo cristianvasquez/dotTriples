@@ -11,15 +11,15 @@ import { ProduceQuads } from './transforms/produceQuads.js'
 function defaultStatsToQuads ({ fileUri, path, name, stats }) {
   const { size, atime, mtime, ctime } = stats
   return [
-    rdf.quad(fileUri, ns.dot.path, rdf.literal(path)),
-    rdf.quad(fileUri, ns.dot.name, rdf.literal(name)),
-    rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer)),
+    rdf.quad(fileUri, ns.dot.path, rdf.literal(path), fileUri),
+    rdf.quad(fileUri, ns.dot.name, rdf.literal(name), fileUri),
+    rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer), fileUri),
     rdf.quad(fileUri, ns.dot.atime,
-      rdf.literal(atime.toISOString(), ns.xsd.dateTime)),
+      rdf.literal(atime.toISOString(), ns.xsd.dateTime), fileUri),
     rdf.quad(fileUri, ns.dot.mtime,
-      rdf.literal(mtime.toISOString(), ns.xsd.dateTime)),
+      rdf.literal(mtime.toISOString(), ns.xsd.dateTime), fileUri),
     rdf.quad(fileUri, ns.dot.ctime,
-      rdf.literal(ctime.toISOString(), ns.xsd.dateTime)),
+      rdf.literal(ctime.toISOString(), ns.xsd.dateTime), fileUri),
   ]
 }
 
@@ -72,10 +72,19 @@ function createMarkdownPipeline ({
             dataset.addAll(statsToQuads({ fileUri, path, name, stats }))
 
             // Apply all dataset-mappers
-            let resultDataset = dataset
+            let current = dataset
             for (const mapper of datasetMappers) {
-              resultDataset = mapper(resultDataset)
+              current = mapper(current)
+              // @TODO resultDataset = mapper(current,metadata)
+              // Metadata of the exact markdown sources is emmited, and matched with the named-graph
             }
+
+            // Set namedGraph to the current fileUri
+            const resultDataset = rdf.dataset().
+              addAll([...current].map(
+                quad => rdf.quad(quad.subject, quad.predicate, quad.object,
+                  fileUri)))
+
             // Stream output
             if (outputStream) {
               outputStream.write(resultDataset)
