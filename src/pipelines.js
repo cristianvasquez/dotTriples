@@ -74,8 +74,8 @@ function createMarkdownPipeline ({
             // Apply all dataset-mappers
             let current = dataset
             for (const mapper of datasetMappers) {
-              current = mapper(current)
-              // @TODO resultDataset = mapper(current,metadata)
+              current = mapper(current, {fileUri})
+              // @TODO resultDataset = mapper(current,{metadata})
               // Metadata of the exact markdown sources is emmited, and matched with the named-graph
             }
 
