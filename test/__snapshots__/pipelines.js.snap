@@ -5,9 +5,6 @@ exports[`[MarkdownPipeline] "./Alice.md" 1`] = `
 <http://example.org/Alice.md> <http://dottriples.org/path> \\"./Alice.md\\" .
 <http://example.org/Alice.md> <http://dottriples.org/name> \\"Alice\\" .
 <http://example.org/Alice.md> <http://dottriples.org/size> \\"26\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/Alice.md> <http://dottriples.org/atime> \\"2022-09-25T13:46:50.310Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Alice.md> <http://dottriples.org/mtime> \\"2022-09-02T02:12:08.644Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Alice.md> <http://dottriples.org/ctime> \\"2022-09-02T02:12:08.644Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -17,9 +14,6 @@ exports[`[MarkdownPipeline] "./Person.md" 1`] = `
 <http://example.org/Person.md> <http://dottriples.org/path> \\"./Person.md\\" .
 <http://example.org/Person.md> <http://dottriples.org/name> \\"Person\\" .
 <http://example.org/Person.md> <http://dottriples.org/size> \\"58\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/Person.md> <http://dottriples.org/atime> \\"2022-09-25T17:25:42.067Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Person.md> <http://dottriples.org/mtime> \\"2022-09-25T17:25:42.059Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Person.md> <http://dottriples.org/ctime> \\"2022-09-25T17:25:42.059Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -31,9 +25,6 @@ exports[`[MarkdownPipeline] "./Yaml.md" 1`] = `
 <http://example.org/Yaml.md> <http://dottriples.org/path> \\"./Yaml.md\\" .
 <http://example.org/Yaml.md> <http://dottriples.org/name> \\"Yaml\\" .
 <http://example.org/Yaml.md> <http://dottriples.org/size> \\"110\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/Yaml.md> <http://dottriples.org/atime> \\"2022-09-25T13:46:50.358Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Yaml.md> <http://dottriples.org/mtime> \\"2022-09-02T02:09:27.532Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/Yaml.md> <http://dottriples.org/ctime> \\"2022-09-02T02:09:27.532Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -49,9 +40,6 @@ exports[`[MarkdownPipeline] "./bob/Bob.md" 1`] = `
 <http://example.org/bob/Bob.md> <http://dottriples.org/path> \\"./bob/Bob.md\\" .
 <http://example.org/bob/Bob.md> <http://dottriples.org/name> \\"Bob\\" .
 <http://example.org/bob/Bob.md> <http://dottriples.org/size> \\"331\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/atime> \\"2022-09-25T13:46:50.326Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/mtime> \\"2022-09-02T05:14:07.241Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/ctime> \\"2022-09-02T05:14:07.241Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -60,9 +48,6 @@ exports[`[MarkdownPipeline] "./bob/BobHouse.md" 1`] = `
 <http://example.org/bob/BobHouse.md> <http://dottriples.org/path> \\"./bob/BobHouse.md\\" .
 <http://example.org/bob/BobHouse.md> <http://dottriples.org/name> \\"BobHouse\\" .
 <http://example.org/bob/BobHouse.md> <http://dottriples.org/size> \\"14\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/atime> \\"2022-09-25T13:46:50.342Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/mtime> \\"2022-09-02T03:38:48.794Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/ctime> \\"2022-09-02T03:38:48.794Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -73,9 +58,6 @@ exports[`[MarkdownPipeline] "./dot triples.md" 1`] = `
 <http://example.org/dot%20triples.md> <http://dottriples.org/path> \\"./dot triples.md\\" .
 <http://example.org/dot%20triples.md> <http://dottriples.org/name> \\"dot triples\\" .
 <http://example.org/dot%20triples.md> <http://dottriples.org/size> \\"161\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/dot%20triples.md> <http://dottriples.org/atime> \\"2022-09-25T17:26:24.370Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/dot%20triples.md> <http://dottriples.org/mtime> \\"2022-09-25T17:25:21.221Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/dot%20triples.md> <http://dottriples.org/ctime> \\"2022-09-25T17:25:21.221Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -84,9 +66,6 @@ exports[`[MarkdownPipeline] "./folder/Test.md" 1`] = `
 <http://example.org/folder/Test.md> <http://dottriples.org/path> \\"./folder/Test.md\\" .
 <http://example.org/folder/Test.md> <http://dottriples.org/name> \\"Test\\" .
 <http://example.org/folder/Test.md> <http://dottriples.org/size> \\"99\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/folder/Test.md> <http://dottriples.org/atime> \\"2022-09-25T13:46:50.342Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/folder/Test.md> <http://dottriples.org/mtime> \\"2022-08-31T22:05:10.160Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/folder/Test.md> <http://dottriples.org/ctime> \\"2022-08-31T22:05:10.160Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 "
 `;
 
@@ -97,8 +76,15 @@ exports[`[MarkdownPipeline] "./index.md" 1`] = `
 <http://example.org/index.md> <http://dottriples.org/path> \\"./index.md\\" .
 <http://example.org/index.md> <http://dottriples.org/name> \\"index\\" .
 <http://example.org/index.md> <http://dottriples.org/size> \\"93\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
-<http://example.org/index.md> <http://dottriples.org/atime> \\"2022-09-25T17:26:24.406Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/index.md> <http://dottriples.org/mtime> \\"2022-09-25T17:25:33.113Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<http://example.org/index.md> <http://dottriples.org/ctime> \\"2022-09-25T17:25:33.113Z\\"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+"
+`;
+
+exports[`[MarkdownPipeline] "./misc.md" 1`] = `
+"<http://example.org/misc.md> <http://example.org/has-url> <https://www.rand.org/content/dam/rand/pubs/papers/2008/P899.pdf> <http://example.org/misc.md> .
+<http://example.org/misc.md> <http://example.org/has-url> <http://web1.org> <http://example.org/misc.md> .
+<http://example.org/misc.md> <http://example.org/has-url> <http://web2.org> <http://example.org/misc.md> .
+<http://example.org/misc.md> <http://dottriples.org/path> \\"./misc.md\\" .
+<http://example.org/misc.md> <http://dottriples.org/name> \\"misc\\" .
+<http://example.org/misc.md> <http://dottriples.org/size> \\"220\\"^^<http://www.w3.org/2001/XMLSchema#integer> .
 "
 `;

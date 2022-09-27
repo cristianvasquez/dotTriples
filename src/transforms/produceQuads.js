@@ -12,13 +12,13 @@ class ProduceQuads extends Transform {
 
   getTerm ({ entity, path, fallbackAsLiteral = false }) {
     if (entity.token === THIS) {
-      return this.uriResolver.getUriFromPath(path)
+      return this.uriResolver.getUriFromPath(path) ?? this.uriResolver.fallbackUris.notFoundURI
     }
     if (entity.type === 'internalNameLink') {
-      return this.uriResolver.getUriFromName(entity.name)
+      return this.uriResolver.getUriFromName(entity.name) ?? this.uriResolver.fallbackUris.notFoundURI
     }
     if (entity.type === 'internalPathLink') {
-      return this.uriResolver.getUriFromPath(entity.path)
+      return this.uriResolver.getUriFromPath(entity.path) ?? this.uriResolver.fallbackUris.notFoundURI
     }
     if (entity.type === 'externalLink') {
       return this.uriResolver.namedNode(entity.url)
@@ -30,9 +30,8 @@ class ProduceQuads extends Transform {
         : this.uriResolver.buildPropertyFromText(trim(entity.raw))
     }
 
-    console.error(entity)
-    throw Error('Cannot interpret', entity)
-
+    console.error('could not interpret', entity)
+    throw Error('Cannot interpret')
   }
 
   withFallback (uri) {
@@ -52,36 +51,43 @@ class ProduceQuads extends Transform {
 
       const documentIRI = this.uriResolver.getUriFromPath(path)
 
-      // Subjects and predicates are always URIs, Objects can be either URI or Literal
-      for (const s of inSubject) {
-        for (const p of inPredicate) {
-          for (const o of inObject) {
+      if (content.raw && content.raw !== '') {
+        // Subjects and predicates are always URIs, Objects can be either URI or Literal
+        for (const s of inSubject) {
+          for (const p of inPredicate) {
+            for (const o of inObject) {
+              // console.log(s, p, o, content)
+              const subjectTerm = this.getTerm({ entity: s, path })
 
-            // console.log(s, p, o, content.raw)
-            const subjectTerm = this.getTerm({ entity: s, path })
-
-            let predicateTerm = ''
-            if (p.token === RELATION_WITH_NO_TYPE) {
-              if (o.type === 'externalLink') {
-                predicateTerm = this.uriResolver.fallbackUris.noTypeExternal
-              } else if (o.type === 'internalNameLink' || o.type ===
-                'internalPathLink') {
-                predicateTerm = this.uriResolver.fallbackUris.noTypeInternal
+              let predicateTerm = ''
+              if (p.token === RELATION_WITH_NO_TYPE) {
+                if (o.type === 'externalLink') {
+                  predicateTerm = this.uriResolver.fallbackUris.noTypeExternal
+                } else if (o.type === 'internalNameLink' || o.type ===
+                  'internalPathLink') {
+                  predicateTerm = this.uriResolver.fallbackUris.noTypeInternal
+                } else {
+                  predicateTerm = this.uriResolver.fallbackUris.noType
+                }
               } else {
-                predicateTerm = this.uriResolver.fallbackUris.noType
+                predicateTerm = this.getTerm({ entity: p, path })
               }
-            } else {
-              predicateTerm = this.getTerm({ entity: p, path })
+
+              const objectTerm = this.getTerm(
+                { entity: o, path, fallbackAsLiteral: true })
+
+              // objects can be literal or namedNodes, however if p is RELATION_WITH_NO_TYPE, I don't allow literals
+              const validQuad = !(p.token === RELATION_WITH_NO_TYPE && objectTerm.termType === 'Literal')
+
+              if (validQuad) {
+                const quad = rdf.quad(this.withFallback(subjectTerm),
+                  this.withFallback(predicateTerm),
+                  this.withFallback(objectTerm),
+                  documentIRI)
+                this.push(quad)
+              }
+
             }
-
-            const objectTerm = this.getTerm(
-              { entity: o, path, fallbackAsLiteral: true })
-
-            const quad = rdf.quad(this.withFallback(subjectTerm),
-              this.withFallback(predicateTerm), this.withFallback(objectTerm),
-              documentIRI)
-            this.push(quad)
-
           }
         }
       }

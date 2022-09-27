@@ -1,6 +1,11 @@
 import yaml from 'js-yaml'
 import { Transform } from 'stream'
-import { COMMENTED_DOTDOT, DOTDOT, THIS, RELATION_WITH_NO_TYPE } from '../consts.js'
+import {
+  COMMENTED_DOTDOT,
+  DOTDOT,
+  RELATION_WITH_NO_TYPE,
+  THIS,
+} from '../consts.js'
 
 const PLACEHOLDER = '5de1049b-559f-42e2-8279-ea0c7cfa8f40'
 
@@ -49,7 +54,11 @@ class ParseDotTriples extends Transform {
   }
 
   processPlainText ({ text, links }, header) {
-    text.split('\n').forEach((line) => {
+
+    // description :: A personal preference, that spans many lines.
+    const lines = text.split(DOTDOT).length === 2 ? [text] : text.split('\n')
+
+    lines.forEach((line) => {
       // Just a hack for commented relations (TODO do this properly)
       const text = line.replaceAll(COMMENTED_DOTDOT, PLACEHOLDER)
       const chunks = text.split(DOTDOT).

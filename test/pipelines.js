@@ -40,7 +40,18 @@ describe('[MarkdownPipeline]', async function () {
         },
       })
 
-      const inputStream = createMarkdownPipeline(context, outputStream)
+      // Small version that does not produce dates
+      function statsToQuads ({ fileUri, path, name, stats }) {
+        const { size } = stats
+        return [
+          rdf.quad(fileUri, ns.dot.path, rdf.literal(path)),
+          rdf.quad(fileUri, ns.dot.name, rdf.literal(name)),
+          rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer)),
+        ]
+      }
+
+      const inputStream = createMarkdownPipeline({ ...context, statsToQuads },
+        outputStream)
       inputStream.write(fileName)
       inputStream.end()
 
