@@ -12,7 +12,7 @@ function createJsonPrinter () {
   })
 }
 
-function createQuadPrinter () {
+function createDatasetPrinter () {
   return createOutputStream({
     forEach: (chunk => {
       console.log(chunk.toString())
@@ -28,7 +28,7 @@ function createCounter () {
       callback()
     },
     flush (callback) {
-      console.log(`${this.count} quads`)
+      console.log(`${this.count} elements`)
       callback()
     },
   })
@@ -50,16 +50,15 @@ async function createPrettyPrinter ({ prefixes = {} }) {
 
   return new Transform({
     objectMode: true,
-    write (quad, encoding, callback) {
-      if (!this.quads) {
-        this.quads = []
+    write (dataset, encoding, callback) {
+      if (!this.dataset) {
+        this.dataset = rdf.dataset()
       }
-      this.quads.push(quad)
+      this.dataset.addAll([...dataset])
       callback()
     },
     async flush (callback) {
-      const dataset = rdf.dataset().addAll(this.quads ?? []) // Trick to remove duplicates
-      const stream = await sink.import(dataset.toStream())
+      const stream = await sink.import(this.dataset.toStream())
       const result = await getStream(stream)
       console.log(result)
       callback()
@@ -80,7 +79,7 @@ function createOutputStream ({ forEach } = { forEach: x => x }) {
 
 export {
   createJsonPrinter,
-  createQuadPrinter,
+  createDatasetPrinter,
   createCounter,
   createPrettyPrinter,
 }

@@ -45,7 +45,6 @@ function getUriFromName (fullName, { namesPaths, baseNamespace }) {
   } else {
     // console.log(`Warning, [${fullName}] not found`)
   }
-
   return uri
 }
 
@@ -84,11 +83,11 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
   }
 }
 
-async function createContext ({ basePath, mappers, baseNamespace, quadProducers }) {
+async function createContext ({ basePath, mappers, baseNamespace }) {
   const index = await findFiles(basePath)
   const uriResolver = createUriResolver(
     { index, mappers, baseNamespace: baseNamespace ?? DEFAULT_NAMESPACE })
-  return { basePath, index, uriResolver, quadProducers }
+  return { basePath, mappers, baseNamespace, index, uriResolver }
 }
 
 export {

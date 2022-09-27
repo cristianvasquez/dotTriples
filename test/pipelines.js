@@ -8,6 +8,7 @@ import { createContext } from '../src/context.js'
 import ns from '../src/namespaces.js'
 
 import { createMarkdownPipeline } from '../src/pipelines.js'
+import { collect } from './support/streams.js'
 
 expect.extend({ toMatchSnapshot })
 
@@ -51,11 +52,11 @@ describe('[MarkdownPipeline]', async function () {
       }
 
       const inputStream = createMarkdownPipeline({ ...context, statsToQuads },
-        outputStream)
+        { outputStream })
       inputStream.write(fileName)
       inputStream.end()
 
-      const dataset = await rdf.dataset().import(outputStream)
+      const [dataset] = await collect(outputStream)
 
       expect(dataset.toString()).toMatchSnapshot(this)
     })

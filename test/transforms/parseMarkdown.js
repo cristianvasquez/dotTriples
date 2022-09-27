@@ -5,16 +5,9 @@ import { createReadStream } from 'fs'
 import { resolve } from 'path'
 import { createMarkdownParser } from '../../src/markdownParser.js'
 import { ParseMarkdown } from '../../src/transforms/parseMarkdown.js'
+import {collect} from '../support/streams.js'
 
 expect.extend({ toMatchSnapshot })
-
-async function collect (readable) {
-  const data = []
-  for await (const chunk of readable) {
-    data.push(chunk)
-  }
-  return data
-}
 
 const files = ['links.md']
 const basePath = 'test/transforms/support'

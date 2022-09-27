@@ -1,7 +1,7 @@
 import { createReadStream, stat } from 'fs'
 import { resolve } from 'path'
 import rdf from 'rdf-ext'
-import { Transform } from 'stream'
+import { PassThrough, Transform } from 'stream'
 import { createMarkdownParser } from './markdownParser.js'
 import ns from './namespaces.js'
 import { ParseDotTriples } from './transforms/parseDotTriples.js'
@@ -23,14 +23,17 @@ function defaultStatsToQuads ({ fileUri, path, name, stats }) {
   ]
 }
 
-// Expects markdown files, and produces triples
+// Expects markdown files, and produces datasets
 function createMarkdownPipeline ({
   basePath,
   uriResolver,
-  quadProducers,
+  datasetMappers = [],
   statsToQuads = defaultStatsToQuads,
-  callback = () => {},
-}, destStream) {
+}, { outputStream, callback }) {
+
+  if (!(outputStream || callback)) {
+    throw Error('outputStream stream and/or callback is required')
+  }
 
   const markdownParser = createMarkdownParser()
   const transform = new Transform({
@@ -42,20 +45,45 @@ function createMarkdownPipeline ({
         if (err) {
           console.error(err)
         } else {
+
+          const quadStream = new PassThrough({
+            objectMode: true,
+            write (object, encoding, callback) {
+              this.push(object)
+              callback()
+            },
+          })
+
           const fileStream = createReadStream(filePath).
             pipe(new ParseMarkdown({ markdownParser }, { path }, {})).
             pipe(new ParseDotTriples()).
-            pipe(new ProduceQuads({ uriResolver, quadProducers }, {}))
+            pipe(new ProduceQuads({ uriResolver }, {})).
+            pipe(quadStream)
 
-          fileStream.pipe(destStream, { end: false })
+          const dataset = rdf.dataset()
+          dataset.import(quadStream)
+
           fileStream.on('error', done)
           fileStream.on('end', () => {
             const fileUri = uriResolver.getUriFromPath(path)
             const name = uriResolver.getNameFromPath(path)
-            for (const quad of statsToQuads({ fileUri, path, name, stats })) {
-              destStream.write(quad)
+
+            // Add stats quads
+            dataset.addAll(statsToQuads({ fileUri, path, name, stats }))
+
+            // Apply all dataset-mappers
+            let resultDataset = dataset
+            for (const mapper of datasetMappers) {
+              resultDataset = mapper(resultDataset)
             }
-            callback(path)
+            // Stream output
+            if (outputStream) {
+              outputStream.write(resultDataset)
+            }
+            // Callback method
+            if (callback) {
+              callback(path, resultDataset)
+            }
             done()
           })
         }
@@ -63,14 +91,15 @@ function createMarkdownPipeline ({
     },
   })
 
-  transform.on('error', () => {
-    destStream.destroy()
-  }).on('finish', () => {
-    destStream.end()
-  }).on('end', () => {
-    destStream.end()
-  })
-
+  if (outputStream) {
+    transform.on('error', () => {
+      outputStream.destroy()
+    }).on('finish', () => {
+      outputStream.end()
+    }).on('end', () => {
+      outputStream.end()
+    })
+  }
   return transform
 }
 
