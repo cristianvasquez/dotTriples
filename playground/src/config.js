@@ -1,26 +1,21 @@
 import { ItemType } from 'golden-layout'
 
-const HOME = {
-  componentType: 'Home',
-  title: 'Home',
-}
-
-const CONFIG = {
-  title: 'Settings',
-  componentType: 'Settings',
-}
-
-const COUNTER = {
-  componentType: 'Counter',
-  title: 'Counter',
-}
-
 const FILES = {
-  componentType: 'Files',
-  title: 'Files',
+  title: 'files',
+  componentType: './components/Files.vue',
 }
 
-const miniRowLayout = {
+const SETTINGS = {
+  title: 'Settings',
+  componentType: './components/Settings.vue',
+}
+
+const GRAPH = {
+  title: 'Graph',
+  componentType: './components/Graph.vue',
+}
+
+const baseLayout = {
   root: {
     type: ItemType.row,
     content: [
@@ -30,17 +25,17 @@ const miniRowLayout = {
         isClosable: false,
         width: 40,
         componentState: undefined,
-        ...HOME
+        ...FILES
       },
       {
         type: 'component',
         header: { show: 'top', popout: false },
         width: 40,
         componentState: { abc: 123 },
-        ...CONFIG
+        ...SETTINGS
       },
     ],
   },
 }
 
-export { miniRowLayout, HOME, CONFIG, COUNTER, FILES }
+export { FILES, SETTINGS, GRAPH, baseLayout }
