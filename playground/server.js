@@ -1,6 +1,6 @@
 import { promises } from 'fs'
 import { Server } from 'socket.io'
-import { DIRECTORY, FILE } from './src/actions.js'
+import { DIRECTORY, DIRECTORY_ERROR, FILE } from './src/actions.js'
 
 const io = new Server(3000, {
   cors: {
@@ -13,8 +13,15 @@ io.on('connection', (socket) => {
   socket.emit('Hello world')
 
   socket.on(DIRECTORY, async (directory) => {
-    const result = await promises.readdir(directory)
-    socket.emit(DIRECTORY, JSON.stringify(result))
+
+    try {
+      const result = await promises.readdir(directory)
+      socket.emit(DIRECTORY, JSON.stringify(result))
+    } catch (error) {
+      socket.emit(DIRECTORY_ERROR, JSON.stringify(error))
+    }
+
+
   })
 
   socket.on(FILE, async (file) => {

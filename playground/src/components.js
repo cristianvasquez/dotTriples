@@ -1,7 +1,7 @@
 
-const FILES = {
+const CONTAINERS = {
   title: 'files',
-  componentType: './components/Files.vue',
+  componentType: './components/Containers.vue',
 }
 
 const SETTINGS = {
@@ -18,4 +18,4 @@ const CONTENT = {
   title: 'Content', componentType: './components/Content.vue',
 }
 
-export { FILES, SETTINGS, GRAPH, CONTENT }
+export { CONTAINERS, SETTINGS, GRAPH, CONTENT }

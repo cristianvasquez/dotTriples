@@ -1,10 +1,23 @@
 <script setup>
+
+import { storeToRefs } from 'pinia'
+import { useWorkspaceState } from '../store/workspaceState.js'
+
+const workspaceState = useWorkspaceState()
+const {
+  currentWorkspacePath,
+  currentContainers,
+  currentSelection,
+} = storeToRefs(workspaceState)
+
+
 </script>
 
 <template>
 
   <div>
-    Hi I'm the content
+    currentWorkspacePath: {{ currentWorkspacePath }}
+    currentSelection: {{ currentSelection }}
   </div>
 
 </template>

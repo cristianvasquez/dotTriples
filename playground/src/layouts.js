@@ -1,5 +1,5 @@
 import { ItemType } from 'golden-layout'
-import { CONTENT, FILES, SETTINGS } from './components.js'
+import { CONTENT, CONTAINERS, SETTINGS } from './components.js'
 
 const baseLayout = {
   root: {
@@ -11,7 +11,7 @@ const baseLayout = {
         isClosable: false,
         width: 40,
         componentState: undefined,
-        ...FILES,
+        ...CONTAINERS,
       },
       {
         type: 'component',
@@ -38,7 +38,7 @@ const contentLayout = {
             isClosable: false,
             height: 60,
             componentState: undefined,
-            ...FILES,
+            ...CONTAINERS,
           },
           {
             type: 'component',
