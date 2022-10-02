@@ -1,39 +1,26 @@
 <script setup>
-import { useWebSocket } from '@vueuse/core'
 import { darkTheme, NButton, NConfigProvider, NInput, NSpace, NTree } from 'naive-ui'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+
+import { io } from 'socket.io-client'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { DIRECTORY } from '../actions.js'
 
-const { status, data, send, open, close } = useWebSocket('ws://localhost:8080', {
-  autoReconnect: true,
-  // heartbeat: true,
-})
+const socket = io('ws://localhost:3000')
 
 onMounted(() => {
-  open()
+  socket.open()
 })
 onUnmounted(() => {
-  close()
+  socket.close()
 })
-
-function pushButton () {
-  send(`${DIRECTORY}${vaultPath.value}`)
-}
 
 const vaultPath = ref('../test/markdown')
 
+function pushButton () {
+  socket.emit(DIRECTORY, vaultPath.value)
+}
+
 const files = ref([])
-watch(data, () => {
-  const message = JSON.parse(data.value)
-  if (message.key === DIRECTORY) {
-    files.value = message.data
-    treeData.value = message.data.map((element, index) => ({
-      label: element,
-      key: index,
-      isLeaf: true,
-    }))
-  }
-})
 
 const treeData = ref([
   {
@@ -41,6 +28,16 @@ const treeData = ref([
     key: '1',
     isLeaf: false,
   }])
+
+socket.on(DIRECTORY, (arg) => {
+  const directory = JSON.parse(arg)
+  files.value = directory
+  treeData.value = directory.map((element, index) => ({
+    label: element,
+    key: index,
+    isLeaf: true,
+  }))
+})
 
 function handleLoad (node) {
   return new Promise((resolve) => {
@@ -66,20 +63,16 @@ function handleLoad (node) {
 <template>
   <n-config-provider :theme="darkTheme">
 
-    <div>Status: {{ status }}</div>
-    <div>Data: {{ files }}</div>
+    <div>Files: {{ files }}</div>
     <n-space horizontal>
       <n-input v-model:value="vaultPath" placeholder="Autosizable" autosize style="min-width: 100%"/>
       <n-button @click="pushButton">Load dir</n-button>
     </n-space>
 
     <n-tree
-
         :data="treeData"
         :on-load="handleLoad"
-
     />
-
 
   </n-config-provider>
 </template>

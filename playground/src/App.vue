@@ -3,16 +3,17 @@
 import { storeToRefs } from 'pinia'
 import { Glayout, useLayoutStore } from 'playground-template'
 import { onMounted } from 'vue'
-import { baseLayout, SETTINGS, GRAPH, FILES } from './config.js'
+import { CONTENT, FILES, GRAPH, SETTINGS } from './components.js'
+import { contentLayout } from './layouts.js'
 
 const store = useLayoutStore()
 const { rootLayoutRef } = storeToRefs(store)
 const { addInstance, loadLayout } = store
 
-const components = [FILES, SETTINGS, GRAPH]
+const components = [FILES, SETTINGS, GRAPH, CONTENT]
 
 onMounted(() => {
-  loadLayout(baseLayout)
+  loadLayout(contentLayout)
 })
 
 </script>

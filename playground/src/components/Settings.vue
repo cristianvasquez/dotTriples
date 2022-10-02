@@ -1,12 +1,13 @@
 <script setup>
-import { baseLayout } from '../config.js'
 import { useLayoutStore } from 'playground-template'
+import { baseLayout, contentLayout } from '../layouts.js'
 
 const store = useLayoutStore()
 const { saveCurrentLayout, loadCurrentLayout, loadLayout } = store
 
 const layouts = [
   { name: 'Default layout', data: baseLayout },
+  { name: 'Content', data: contentLayout },
 ]
 
 function load (index) {
