@@ -8,12 +8,12 @@ import { contentLayout } from './layouts.js'
 
 const store = useLayoutStore()
 const { rootLayoutRef } = storeToRefs(store)
-const { addInstance, loadLayout } = store
+const { addInstance, loadLayoutConfig } = store
 
 const components = [CONTAINERS, SETTINGS, GRAPH, CONTENT]
 
 onMounted(() => {
-  loadLayout(contentLayout)
+  loadLayoutConfig(contentLayout)
 })
 
 </script>
