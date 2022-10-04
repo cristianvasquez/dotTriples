@@ -3,10 +3,15 @@ import { defineStore } from 'pinia'
 import rdf from 'rdf-ext'
 import { io } from 'socket.io-client'
 import { ref, toRaw } from 'vue'
-import { DIRECTORY, DIRECTORY_ERROR, TRIPLIFY } from '../actions.js'
+import {
+  DIRECTORY,
+  DIRECTORY_ERROR,
+  TRIPLIFY,
+  RETRIEVE_CONTENTS,
+  RETRIEVE_CONTENTS_ERROR,
+} from '../actions.js'
 import ns from '../namespaces.js'
 import { toTree } from './toTree.js'
-
 const socket = io('ws://localhost:3000')
 socket.open()
 
@@ -22,6 +27,7 @@ export const useWorkspaceState = defineStore('current-selection-store',
     const currentContainers = ref([])
     const currentSelection = ref([])
     const currentQuads = ref([])
+    const currentContents = ref([])
 
     function doLoadWorkspace (workspacePath) {
       socket.emit(DIRECTORY, workspacePath)
@@ -44,21 +50,39 @@ export const useWorkspaceState = defineStore('current-selection-store',
     })
 
     function doTriplify (uris) {
-      const triplify = JSON.stringify(toRaw(uris))
-      socket.emit(TRIPLIFY, triplify)
+      const urisStr = JSON.stringify(toRaw(uris))
+      socket.emit(TRIPLIFY, urisStr)
     }
 
     socket.on(TRIPLIFY, (arg) => {
       currentQuads.value = toQuads(arg)
     })
 
+    // TODO, retrieve things with an index
+    function doRetrieveContents (uris) {
+      const urisStr = JSON.stringify(toRaw(uris))
+      socket.emit(RETRIEVE_CONTENTS, urisStr)
+    }
+
+    socket.on(RETRIEVE_CONTENTS, (arg) => {
+      currentContents.value = JSON.parse(arg)
+    })
+
+    socket.on(RETRIEVE_CONTENTS_ERROR, (arg) => {
+      const error = JSON.parse(arg)
+      currentContents.value = [error]
+      console.log(error)
+    })
+
     return {
       currentWorkspacePath,
       currentContainers,
       currentSelection,
-      doLoadWorkspace,
-      doTriplify,
+      currentContents,
       currentQuads,
+      doLoadWorkspace,
+      doRetrieveContents,
+      doTriplify,
     }
   })
 

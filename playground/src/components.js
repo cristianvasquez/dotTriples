@@ -18,4 +18,8 @@ const CONTENT = {
   title: 'Content', componentType: './components/Content.vue',
 }
 
-export { CONTAINERS, SETTINGS, GRAPH, CONTENT }
+const QUADS = {
+  title: 'Quads', componentType: './components/Quads.vue',
+}
+
+export { CONTAINERS, SETTINGS, GRAPH, CONTENT, QUADS }

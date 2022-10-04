@@ -1,29 +1,29 @@
 <script setup>
+import '@rdfjs-elements/rdf-editor'
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import { useWorkspaceState } from '../store/workspaceState.js'
-import EditBox from './common/Editbox.vue'
-import '@rdfjs-elements/rdf-editor'
+import Markdown from 'vue3-markdown-it';
 
 const store = useWorkspaceState()
 const {
   currentSelection,
-  currentQuads,
+  currentContents,
 } = storeToRefs(store)
 
-watch(currentSelection, () => store.doTriplify(currentSelection.value))
+watch(currentSelection, () => store.doRetrieveContents(currentSelection.value))
 
-
+// https://github.com/JanGuillermo/vue3-markdown-it
 </script>
 
 <template>
 
   <div>
-
-    <template v-if="currentQuads.length>0">
-      <edit-box format="application/trig" :quads="currentQuads"/>
+    <template v-for="markdown of currentContents">
+      <div>
+        <Markdown :source="markdown" />
+      </div>
     </template>
-
   </div>
 
 </template>

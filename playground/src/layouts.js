@@ -1,5 +1,5 @@
 import { ItemType } from 'golden-layout'
-import { CONTENT, CONTAINERS, SETTINGS } from './components.js'
+import { CONTENT, CONTAINERS, SETTINGS, QUADS } from './components.js'
 
 const baseLayout = {
   root: {
@@ -54,9 +54,16 @@ const contentLayout = {
       {
         type: 'component',
         header: { show: 'top', popout: false },
-        width: 60,
-        componentState: { abc: 123 },
+        width: 30,
+        componentState: undefined,
         ...CONTENT,
+      },
+      {
+        type: 'component',
+        header: { show: 'top', popout: false },
+        width: 30,
+        componentState: undefined,
+        ...QUADS,
       },
     ],
   },
