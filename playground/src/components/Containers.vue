@@ -26,30 +26,31 @@ function updateCheckedKeys (v) {
   currentSelection.value = [...v]
 }
 
-function handleOpenContainer (node) {
-  return new Promise((resolve) => {
-    node.children = [
-      {
-        label: 'hola',
-        key: node.key + '1',
-        isLeaf: true,
-      },
-      {
-        label: 'mundo',
-        key: node.key + '2',
-        isLeaf: false,
-      },
-    ]
-    resolve()
-  })
-}
+// function handleOpenContainer (node) {
+//   return new Promise((resolve) => {
+//     node.children = [
+//       {
+//         label: 'hola',
+//         key: node.key + '1',
+//         isLeaf: true,
+//       },
+//       {
+//         label: 'mundo',
+//         key: node.key + '2',
+//         isLeaf: false,
+//       },
+//     ]
+//     resolve()
+//   })
+// }
 
 </script>
 
 <template>
   <n-config-provider :theme="darkTheme">
+    <!--        :on-load="handleOpenContainer"-->
     <n-tree
-        :on-load="handleOpenContainer"
+
         block-line
         cascade
         checkable

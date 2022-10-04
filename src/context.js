@@ -48,7 +48,7 @@ function getUriFromName (fullName, { namesPaths, baseNamespace }) {
   return uri
 }
 
-async function findFiles (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
+async function buildIndex (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
   const namesPaths = new Map()
   const search = new Glob(pattern, {
     nodir: true, cwd: basePath,
@@ -60,7 +60,11 @@ async function findFiles (basePath, pattern = DEFAULT_SEARCH_PATTERN) {
     namesPaths.set(key, paths)
   })
   const files = (await once(search, 'end'))[0]
-  return { namesPaths, files }
+  const directories = (await once(new Glob('**/', {
+    nodir: false,
+    cwd: basePath
+  }), 'end'))[0].map(dir=>`./${dir.slice(0, -1)}`)
+  return { namesPaths, files, directories }
 }
 
 function createUriResolver ({ index, mappers, baseNamespace }) {
@@ -84,7 +88,7 @@ function createUriResolver ({ index, mappers, baseNamespace }) {
 }
 
 async function createContext ({ basePath, mappers, baseNamespace }) {
-  const index = await findFiles(basePath)
+  const index = await buildIndex(basePath)
   const uriResolver = createUriResolver(
     { index, mappers, baseNamespace: baseNamespace ?? DEFAULT_NAMESPACE })
   return { basePath, mappers, baseNamespace, index, uriResolver }

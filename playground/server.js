@@ -1,6 +1,10 @@
-import { promises } from 'fs'
+import { resolve } from 'path'
+import rdf from 'rdf-ext'
 import { Server } from 'socket.io'
-import { DIRECTORY, DIRECTORY_ERROR, FILE } from './src/actions.js'
+import { PassThrough } from 'stream'
+import { createContext, createIndexDataset, createMarkdownPipeline } from '../index.js'
+import ns from '../src/namespaces.js'
+import { DIRECTORY, DIRECTORY_ERROR, TRIPLIFY, TRIPLIFY_ERROR } from './src/actions.js'
 
 const io = new Server(3000, {
   cors: {
@@ -9,23 +13,66 @@ const io = new Server(3000, {
   },
 })
 
+const vault = ns.ex
+const mappers = {
+  'is a': ns.rdf.type,
+  'are': ns.rdf.type,
+  'foaf:knows': ns.foaf.knows,
+}
+
+let context = undefined
+let indexDataset = undefined
+
+async function collect (readable) {
+  const result = rdf.dataset()
+  for await (const dataset of readable) {
+    result.addAll([...dataset])
+  }
+  return result
+}
+
 io.on('connection', (socket) => {
-  socket.emit('Hello world')
 
   socket.on(DIRECTORY, async (directory) => {
-
     try {
-      const result = await promises.readdir(directory)
-      socket.emit(DIRECTORY, JSON.stringify(result))
+      context = await createContext(
+        { basePath: resolve(directory), baseNamespace: vault, mappers })
+      indexDataset = createIndexDataset(context)
+      // const result = await promises.readdir(directory + '/')
+      socket.emit(DIRECTORY, indexDataset.toString())
     } catch (error) {
       socket.emit(DIRECTORY_ERROR, JSON.stringify(error))
     }
-
-
   })
 
-  socket.on(FILE, async (file) => {
-    promises.readFile(file)
-    socket.emit(FILE, `The file is ${file}`)
+  socket.on(TRIPLIFY, async (payLoad) => {
+    try {
+      const uris = JSON.parse(payLoad)
+
+      const isLeaf = (ptr) => ns.dot.Folder.value !==
+        ptr.out(ns.rdf.type).term?.value
+
+      const paths = uris.map(uri => rdf.clownface( {dataset:indexDataset, term:rdf.namedNode(uri)})).
+        filter(isLeaf).
+        map(ptr => ptr.out(ns.dot.path).value).filter(path => path.endsWith('.md'))
+
+      const outputStream = new PassThrough({
+        objectMode: true, write (object, encoding, callback) {
+          this.push(object)
+          callback()
+        },
+      })
+      const inputStream = createMarkdownPipeline(context, { outputStream })
+      for (const file of paths) {
+        inputStream.write(file)
+      }
+      inputStream.end()
+      const result = await collect(outputStream)
+
+      socket.emit(TRIPLIFY, result.toString())
+    } catch (error) {
+      socket.emit(TRIPLIFY_ERROR, JSON.stringify(error))
+    }
   })
+
 })

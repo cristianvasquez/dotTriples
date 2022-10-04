@@ -1,29 +1,39 @@
+import { Parser } from 'n3'
 import { defineStore } from 'pinia'
+import rdf from 'rdf-ext'
 import { io } from 'socket.io-client'
-import { ref } from 'vue'
-import { DIRECTORY, DIRECTORY_ERROR } from '../actions.js'
+import { ref, toRaw } from 'vue'
+import { DIRECTORY, DIRECTORY_ERROR, TRIPLIFY } from '../actions.js'
+import ns from '../namespaces.js'
+import { toTree } from './toTree.js'
 
 const socket = io('ws://localhost:3000')
 socket.open()
+
+const parser = new Parser()
+
+function toQuads (str) {
+  return parser.parse(str)
+}
 
 export const useWorkspaceState = defineStore('current-selection-store',
   () => {
     const currentWorkspacePath = ref()
     const currentContainers = ref([])
     const currentSelection = ref([])
+    const currentData = ref()
 
     function doLoadWorkspace (workspacePath) {
       socket.emit(DIRECTORY, workspacePath)
     }
 
     socket.on(DIRECTORY, (arg) => {
-      const directory = JSON.parse(arg)
+      const quads = toQuads(arg)
+      const dataset = rdf.dataset().addAll(quads)
+      const pointer = rdf.clownface({ term: ns.dot.root, dataset })
+
       currentSelection.value = []
-      currentContainers.value = directory.map((element, index) => ({
-        label: element,
-        key: index,
-        isLeaf: true,
-      }))
+      currentContainers.value = toTree(pointer)
     })
 
     socket.on(DIRECTORY_ERROR, (arg) => {
@@ -33,11 +43,24 @@ export const useWorkspaceState = defineStore('current-selection-store',
       console.log(error)
     })
 
+    function doTriplify (uris) {
+      const triplify = JSON.stringify(toRaw(uris))
+      socket.emit(TRIPLIFY, triplify)
+    }
+
+    socket.on(TRIPLIFY, (arg) => {
+      const quads = toQuads(arg)
+      const dataset = rdf.dataset().addAll(quads)
+      currentData.value = dataset.toString()
+    })
+
     return {
       currentWorkspacePath,
       currentContainers,
       currentSelection,
+      currentData,
       doLoadWorkspace,
+      doTriplify,
     }
   })
 

@@ -1,5 +1,4 @@
 import { onlyLiteralObjects } from './exampleMapper.js'
-import { createFolderMapper } from './fileSystemMappers.js'
 
 const exampleMappers = [
   onlyLiteralObjects,
@@ -7,7 +6,7 @@ const exampleMappers = [
 
 function createDefaultMappers (context) {
   return [
-    createFolderMapper(context),
+    // createFolderMapper(context),
   ]
 }
 
