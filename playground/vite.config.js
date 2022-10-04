@@ -20,5 +20,11 @@ export default defineConfig({
     target: 'es2020',
   },
 
-  plugins: [vue()],
+  plugins: [vue({
+    template: {
+      compilerOptions: {
+        isCustomElement: (tag) => ['rdf-editor'].includes(tag),
+      }
+    }
+  })],
 })

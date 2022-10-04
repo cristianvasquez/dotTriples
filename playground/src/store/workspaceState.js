@@ -21,7 +21,7 @@ export const useWorkspaceState = defineStore('current-selection-store',
     const currentWorkspacePath = ref()
     const currentContainers = ref([])
     const currentSelection = ref([])
-    const currentData = ref()
+    const currentQuads = ref([])
 
     function doLoadWorkspace (workspacePath) {
       socket.emit(DIRECTORY, workspacePath)
@@ -49,18 +49,16 @@ export const useWorkspaceState = defineStore('current-selection-store',
     }
 
     socket.on(TRIPLIFY, (arg) => {
-      const quads = toQuads(arg)
-      const dataset = rdf.dataset().addAll(quads)
-      currentData.value = dataset.toString()
+      currentQuads.value = toQuads(arg)
     })
 
     return {
       currentWorkspacePath,
       currentContainers,
       currentSelection,
-      currentData,
       doLoadWorkspace,
       doTriplify,
+      currentQuads,
     }
   })
 

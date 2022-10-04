@@ -30,7 +30,7 @@ const contentLayout = {
     content: [
       {
         type: ItemType.column,
-        width: 40,
+        width: 20,
         content: [
           {
             type: 'component',
@@ -54,7 +54,7 @@ const contentLayout = {
       {
         type: 'component',
         header: { show: 'top', popout: false },
-        width: 40,
+        width: 60,
         componentState: { abc: 123 },
         ...CONTENT,
       },

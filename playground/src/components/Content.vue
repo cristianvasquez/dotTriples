@@ -1,14 +1,14 @@
 <script setup>
-
 import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import { useWorkspaceState } from '../store/workspaceState.js'
-import {  NInput } from 'naive-ui'
+import EditBox from './common/Editbox.vue'
+import '@rdfjs-elements/rdf-editor'
 
 const store = useWorkspaceState()
 const {
   currentSelection,
-  currentData,
+  currentQuads,
 } = storeToRefs(store)
 
 watch(currentSelection, () => store.doTriplify(currentSelection.value))
@@ -19,13 +19,11 @@ watch(currentSelection, () => store.doTriplify(currentSelection.value))
 <template>
 
   <div>
-    <n-input
-        v-model:value="currentData"
-        type="textarea"
-        :autosize="{
-        minRows: 3
-      }"
-    />
+
+    <template v-if="currentQuads.length>0">
+      <edit-box format="application/trig" :quads="currentQuads"/>
+    </template>
+
   </div>
 
 </template>
