@@ -18,7 +18,7 @@ function init () {
     currentWorkspacePath.value = '../test/markdown'
   }
   if (!currentContainers.value.length) {
-    store.doLoadWorkspace(currentWorkspacePath.value)
+    store.doLoadWorkspace({ path: currentWorkspacePath.value })
   }
 }
 

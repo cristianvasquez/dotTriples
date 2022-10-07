@@ -11,7 +11,7 @@ const {
   currentContents,
 } = storeToRefs(store)
 
-watch(currentSelection, () => store.doRetrieveContents(currentSelection.value))
+watch(currentSelection, () => store.doRetrieveContents({ uris:currentSelection.value }))
 
 // https://github.com/JanGuillermo/vue3-markdown-it
 </script>
@@ -19,7 +19,7 @@ watch(currentSelection, () => store.doRetrieveContents(currentSelection.value))
 <template>
 
   <div>
-    <template v-for="markdown of currentContents">
+    <template v-for="{ uri, markdown} of currentContents">
       <div>
         <Markdown :source="markdown" />
       </div>

@@ -1,18 +1,13 @@
 <script setup>
+import '@rdfjs-elements/rdf-editor'
 import { storeToRefs } from 'pinia'
-import { watch } from 'vue'
 import { useWorkspaceState } from '../store/workspaceState.js'
 import EditBox from './common/Editbox.vue'
-import '@rdfjs-elements/rdf-editor'
 
 const store = useWorkspaceState()
 const {
-  currentSelection,
   currentQuads,
 } = storeToRefs(store)
-
-watch(currentSelection, () => store.doTriplify(currentSelection.value))
-
 
 </script>
 

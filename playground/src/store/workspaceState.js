@@ -2,16 +2,16 @@ import { Parser } from 'n3'
 import { defineStore } from 'pinia'
 import rdf from 'rdf-ext'
 import { io } from 'socket.io-client'
-import { ref, toRaw } from 'vue'
+import { ref, toRaw, watch } from 'vue'
 import {
   DIRECTORY,
-  DIRECTORY_ERROR,
-  TRIPLIFY,
+  LOG,
   RETRIEVE_CONTENTS,
-  RETRIEVE_CONTENTS_ERROR,
+  TRIPLIFY,
 } from '../actions.js'
 import ns from '../namespaces.js'
 import { toTree } from './toTree.js'
+
 const socket = io('ws://localhost:3000')
 socket.open()
 
@@ -24,54 +24,64 @@ function toQuads (str) {
 export const useWorkspaceState = defineStore('current-selection-store',
   () => {
     const currentWorkspacePath = ref()
-    const currentContainers = ref([])
     const currentSelection = ref([])
+    const currentContainers = ref([])
     const currentQuads = ref([])
     const currentContents = ref([])
 
-    function doLoadWorkspace (workspacePath) {
-      socket.emit(DIRECTORY, workspacePath)
+    function appendLog ({ error, date, args }) {
+      console.log(date, ...args) // Remote
     }
 
-    socket.on(DIRECTORY, (arg) => {
-      const quads = toQuads(arg)
-      const dataset = rdf.dataset().addAll(quads)
-      const pointer = rdf.clownface({ term: ns.dot.root, dataset })
-
-      currentSelection.value = []
-      currentContainers.value = toTree(pointer)
+    socket.on(LOG, ({ date, args }) => {
+      appendLog({ date, args })
     })
 
-    socket.on(DIRECTORY_ERROR, (arg) => {
-      const error = JSON.parse(arg)
-      currentSelection.value = []
-      currentContainers.value = []
-      console.log(error)
-    })
-
-    function doTriplify (uris) {
-      const urisStr = JSON.stringify(toRaw(uris))
-      socket.emit(TRIPLIFY, urisStr)
+    function doLoadWorkspace ({ path }) {
+      socket.emit(DIRECTORY, { path })
     }
 
-    socket.on(TRIPLIFY, (arg) => {
-      currentQuads.value = toQuads(arg)
+    socket.on(DIRECTORY, ({ turtle, error }) => {
+      if (error) {
+        currentSelection.value = []
+        currentContainers.value = []
+        console.error(error)
+      } else {
+        const quads = toQuads(turtle)
+        const dataset = rdf.dataset().addAll(quads)
+        const pointer = rdf.clownface({ term: ns.dot.root, dataset })
+
+        currentSelection.value = []
+        currentContainers.value = toTree(pointer)
+      }
     })
 
-    // TODO, retrieve things with an index
-    function doRetrieveContents (uris) {
-      const urisStr = JSON.stringify(toRaw(uris))
-      socket.emit(RETRIEVE_CONTENTS, urisStr)
+    watch(currentSelection, () => doTriplify({ uris: currentSelection.value }))
+
+    function doTriplify ({ uris }) {
+      socket.emit(TRIPLIFY, { uris: toRaw(uris) })
     }
 
-    socket.on(RETRIEVE_CONTENTS, (arg) => {
-      currentContents.value = JSON.parse(arg)
+    socket.on(TRIPLIFY, ({ turtle, error }) => {
+      if (error) {
+        currentQuads.value = []
+        console.error(error)
+      } else {
+        currentQuads.value = toQuads(turtle)
+      }
     })
 
-    socket.on(RETRIEVE_CONTENTS_ERROR, (arg) => {
-      const error = JSON.parse(arg)
-      currentContents.value = [error]
-      console.log(error)
+    function doRetrieveContents ({ uris }) {
+      socket.emit(RETRIEVE_CONTENTS, { uris: toRaw(uris) })
+    }
+
+    socket.on(RETRIEVE_CONTENTS, ({ contents, error }) => {
+      if (error){
+        currentContents.value = []
+        console.error(error)
+      } else {
+        currentContents.value = contents
+      }
     })
 
     return {
@@ -82,7 +92,6 @@ export const useWorkspaceState = defineStore('current-selection-store',
       currentQuads,
       doLoadWorkspace,
       doRetrieveContents,
-      doTriplify,
     }
   })
 

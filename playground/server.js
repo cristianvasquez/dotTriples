@@ -10,14 +10,7 @@ import {
   createMarkdownPipeline,
 } from '../index.js'
 import ns from '../src/namespaces.js'
-import {
-  DIRECTORY,
-  DIRECTORY_ERROR,
-  RETRIEVE_CONTENTS,
-  RETRIEVE_CONTENTS_ERROR,
-  TRIPLIFY,
-  TRIPLIFY_ERROR,
-} from './src/actions.js'
+import { DIRECTORY, LOG, RETRIEVE_CONTENTS, TRIPLIFY } from './src/actions.js'
 
 const io = new Server(3000, {
   cors: {
@@ -44,36 +37,48 @@ async function collect (readable) {
   return result
 }
 
-function urisToPaths (uris) {
-  const isLeaf = (ptr) => ns.dot.Folder.value !==
+function pointersInIndex (uris) {
+  const isLeaf = ({ ptr }) => ns.dot.Folder.value !==
     ptr.out(ns.rdf.type).term?.value
 
   return uris.map(
-    uri => rdf.clownface({ dataset: indexDataset, term: rdf.namedNode(uri) })).
-    filter(isLeaf).
-    map(ptr => ptr.out(ns.dot.path).value).filter(path => path.endsWith('.md'))
+    uri => {
+      const ptr = rdf.clownface(
+        { dataset: indexDataset, term: rdf.namedNode(uri) })
+      const path = ptr.out(ns.dot.path).value
+      return {
+        ptr,
+        path,
+      }
+    }).filter(isLeaf).filter(({ path }) => path.endsWith('.md'))
 }
 
 io.on('connection', (socket) => {
 
-  socket.on(DIRECTORY, async (directory) => {
-    // console.log(DIRECTORY, directory)
+  function log (...args) {
+    socket.emit(LOG, {
+      date: new Date(),
+      args,
+    })
+  }
+
+  socket.on(DIRECTORY, async ({ path }) => {
     try {
       context = await createContext(
-        { basePath: resolve(directory), baseNamespace: vault, mappers })
+        { basePath: resolve(path), baseNamespace: vault, mappers })
       indexDataset = createIndexDataset(context)
-      // const result = await promises.readdir(directory + '/')
-      socket.emit(DIRECTORY, indexDataset.toString())
+      socket.emit(DIRECTORY, {
+        turtle: indexDataset.toString(),
+      })
     } catch (error) {
-      socket.emit(DIRECTORY_ERROR, JSON.stringify(error))
+      console.error(error)
+      socket.emit(DIRECTORY, { error })
     }
   })
 
-  socket.on(TRIPLIFY, async (payLoad) => {
-    // console.log(TRIPLIFY, payLoad)
+  socket.on(TRIPLIFY, async ({ uris }) => {
     try {
-      const uris = JSON.parse(payLoad)
-      const paths = urisToPaths(uris)
+      const paths = pointersInIndex(uris).map(({ path }) => path)
 
       const outputStream = new PassThrough({
         objectMode: true, write (object, encoding, callback) {
@@ -86,35 +91,39 @@ io.on('connection', (socket) => {
         inputStream.write(file)
       }
       inputStream.end()
-      const result = await collect(outputStream)
+      const dataset = await collect(outputStream)
 
-      socket.emit(TRIPLIFY, result.toString())
+      socket.emit(TRIPLIFY, { turtle: dataset.toString() })
     } catch (error) {
-      socket.emit(TRIPLIFY_ERROR, JSON.stringify(error))
+      console.error(error)
+      socket.emit(TRIPLIFY, { error })
     }
   })
 
-  socket.on(RETRIEVE_CONTENTS, async (payLoad) => {
-    // console.log(RETRIEVE_CONTENTS, payLoad)
+  socket.on(RETRIEVE_CONTENTS, async ({ uris }) => {
     try {
-      const uris = JSON.parse(payLoad)
-      const paths = urisToPaths(uris)
 
-      const absolutePaths = paths.map(path => resolve(context.basePath, path))
-
-      function readFiles (files) {
+      function readFiles (pointers) {
         return Promise.all(
-          files.map(path => fs.readFile(path)),
+          pointers.map(async ({ ptr, path }) => ({
+            uri: ptr.term.value,
+            buffer: await fs.readFile(resolve(context.basePath, path)),
+          })),
         )
       }
 
-      readFiles(absolutePaths).then(fileContents => {
-        socket.emit(RETRIEVE_CONTENTS,
-          JSON.stringify(fileContents.map(buffer => buffer.toString())))
+      const pointers = pointersInIndex(uris)
+      readFiles(pointers).then(fileContents => {
+        const contents = fileContents.map(({ uri, buffer }) => ({
+          uri,
+          markdown: buffer.toString(),
+        }))
+        socket.emit(RETRIEVE_CONTENTS, { contents })
       })
 
     } catch (error) {
-      socket.emit(RETRIEVE_CONTENTS_ERROR, JSON.stringify(error))
+      console.error(error)
+      socket.emit(RETRIEVE_CONTENTS, { error })
     }
   })
 
