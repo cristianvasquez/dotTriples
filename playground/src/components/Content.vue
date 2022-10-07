@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
 import { useWorkspaceState } from '../store/workspaceState.js'
 import Markdown from 'vue3-markdown-it';
+import { NCard, NCode } from 'naive-ui'
 
 const store = useWorkspaceState()
 const {
@@ -17,13 +18,21 @@ watch(currentSelection, () => store.doRetrieveContents({ uris:currentSelection.v
 </script>
 
 <template>
-
   <div>
     <template v-for="{ uri, markdown} of currentContents">
       <div>
-        <Markdown :source="markdown" />
+          <n-card :title="uri">
+            <template #cover>
+<!--              <img src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg">-->
+            </template>
+            <Markdown :source="markdown" />
+            <n-code
+                :code="markdown"
+                language="markdown"
+            />
+          </n-card>
       </div>
     </template>
-  </div>
 
+  </div>
 </template>
