@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import { promises as fs, watchFile, unwatchFile } from 'fs'
 import { resolve } from 'path'
 import rdf from 'rdf-ext'
 import { Server } from 'socket.io'
@@ -32,19 +32,49 @@ const mappers = {
 }
 
 
-
+let currentlyWatched = undefined
 io.on('connection', (socket) => {
 
+
+  function setWatcher (result, uri) {
+
+    if (result && !result.error && result.paths?.length) {
+      const [path] = result.paths
+
+
+      const listener = async (curr, prev) => {
+        socket.emit(FOCUS_CONTENT, await retrieveContents({ uris: [uri] }))
+        socket.emit(TRIPLIFY_FOCUS, await triplify({ uris: [uri] }))
+      }
+
+      const newPath = resolve(context.basePath, path)
+      if (path && newPath !== currentlyWatched) {
+        if(currentlyWatched){
+          unwatchFile(currentlyWatched, listener)
+        }
+        currentlyWatched = newPath
+        console.log('setting watcher to ',currentlyWatched)
+        watchFile(currentlyWatched, {
+          interval: 1000,
+        }, listener);
+      }
+    }
+  }
+
   socket.on(DIRECTORY, async ({ path }) => {
-    socket.emit(DIRECTORY,await loadDirectory({ path }))
+    socket.emit(DIRECTORY, await loadDirectory({ path }))
   })
 
   socket.on(TRIPLIFY_FOCUS, async ({ uri }) => {
-    socket.emit(TRIPLIFY_FOCUS, await triplify({ uris:[uri] }))
+    const result = await triplify({ uris: [uri] })
+    setWatcher(result, uri)
+    socket.emit(TRIPLIFY_FOCUS, result)
   })
 
   socket.on(FOCUS_CONTENT, async ({ uri }) => {
-    socket.emit(FOCUS_CONTENT, await retrieveContents({ uris:[uri] }))
+    const result = await retrieveContents({ uris: [uri] })
+    setWatcher(result, uri)
+    socket.emit(FOCUS_CONTENT, result)
   })
 
   socket.on(TRIPLIFY_SELECTION, async ({ uris }) => {
@@ -57,7 +87,6 @@ let context = undefined
 let indexDataset = undefined
 async function loadDirectory ({ path }) {
   try {
-    console.log('path', path)
     context = await createContext(
       { basePath: resolve(path), baseNamespace: vault, mappers })
     indexDataset = createIndexDataset(context)
@@ -112,7 +141,7 @@ async function triplify ({ uris }) {
     inputStream.end()
     const dataset = await collect(outputStream)
 
-    return { turtle: dataset.toString() }
+    return { turtle: dataset.toString(), paths }
   } catch (error) {
     console.error(error)
     return { error }
@@ -138,7 +167,7 @@ async function retrieveContents ({ uris }) {
       markdown: buffer.toString(),
     }))
 
-    return { contents }
+    return { contents, paths: pointers.map(({ path }) => path) }
 
   } catch (error) {
     console.error(error)
