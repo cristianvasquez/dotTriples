@@ -32,7 +32,7 @@ onBeforeMount(() => {
 
 const workspaceStore = useWorkspaceState()
 function selectWorkspace () {
-  workspaceStore.doLoadWorkspace(somePath.value)
+  workspaceStore.doLoadWorkspace({ path:somePath.value })
 }
 
 function load (index) {

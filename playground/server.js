@@ -12,8 +12,7 @@ import {
 import ns from '../src/namespaces.js'
 import {
   DIRECTORY,
-  LOG,
-  RETRIEVE_CONTENTS,
+  FOCUS_CONTENT,
   TRIPLIFY_FOCUS,
   TRIPLIFY_SELECTION,
 } from './src/actions.js'
@@ -32,8 +31,45 @@ const mappers = {
   'foaf:knows': ns.foaf.knows,
 }
 
+
+
+io.on('connection', (socket) => {
+
+  socket.on(DIRECTORY, async ({ path }) => {
+    socket.emit(DIRECTORY,await loadDirectory({ path }))
+  })
+
+  socket.on(TRIPLIFY_FOCUS, async ({ uri }) => {
+    socket.emit(TRIPLIFY_FOCUS, await triplify({ uris:[uri] }))
+  })
+
+  socket.on(FOCUS_CONTENT, async ({ uri }) => {
+    socket.emit(FOCUS_CONTENT, await retrieveContents({ uris:[uri] }))
+  })
+
+  socket.on(TRIPLIFY_SELECTION, async ({ uris }) => {
+    socket.emit(TRIPLIFY_SELECTION, await triplify({ uris }))
+  })
+
+})
+
 let context = undefined
 let indexDataset = undefined
+async function loadDirectory ({ path }) {
+  try {
+    console.log('path', path)
+    context = await createContext(
+      { basePath: resolve(path), baseNamespace: vault, mappers })
+    indexDataset = createIndexDataset(context)
+    return {
+      turtle: indexDataset.toString(),
+    }
+  } catch (error) {
+    console.error(error)
+    return { error }
+  }
+
+}
 
 async function collect (readable) {
   const result = rdf.dataset()
@@ -57,7 +93,7 @@ function pointersInIndex (uris) {
         ptr,
         path,
       }
-    }).filter(isLeaf).filter(({ path }) =>  path?.endsWith('.md'))
+    }).filter(isLeaf).filter(({ path }) => path && path.endsWith('.md'))
 }
 
 async function triplify ({ uris }) {
@@ -109,41 +145,3 @@ async function retrieveContents ({ uris }) {
     return { error }
   }
 }
-
-io.on('connection', (socket) => {
-
-  function log (...args) {
-    socket.emit(LOG, {
-      date: new Date(),
-      args,
-    })
-  }
-
-  socket.on(DIRECTORY, async ({ path }) => {
-    try {
-      context = await createContext(
-        { basePath: resolve(path), baseNamespace: vault, mappers })
-      indexDataset = createIndexDataset(context)
-      socket.emit(DIRECTORY, {
-        turtle: indexDataset.toString(),
-      })
-    } catch (error) {
-      console.error(error)
-      socket.emit(DIRECTORY, { error })
-    }
-  })
-
-  socket.on(TRIPLIFY_FOCUS, async ({ uris }) => {
-    socket.emit(TRIPLIFY_FOCUS, await triplify({ uris }))
-  })
-  socket.on(TRIPLIFY_SELECTION, async ({ uris }) => {
-    socket.emit(TRIPLIFY_SELECTION, await triplify({ uris }))
-  })
-
-  socket.on(RETRIEVE_CONTENTS, async ({ uris }) => {
-    socket.emit(RETRIEVE_CONTENTS, await retrieveContents({ uris }))
-  })
-
-})
-
-

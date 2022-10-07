@@ -12,7 +12,7 @@ const {
   currentFocusContents,
 } = storeToRefs(store)
 
-watch(currentFocus, () => store.doRetrieveContents({ uris:[currentFocus.value] }))
+watch(currentFocus, () => store.doRetrieveContents({ uri:currentFocus.value }))
 
 // https://github.com/JanGuillermo/vue3-markdown-it
 </script>

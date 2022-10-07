@@ -5,8 +5,7 @@ import { io } from 'socket.io-client'
 import { ref, toRaw, watch } from 'vue'
 import {
   DIRECTORY,
-  LOG,
-  RETRIEVE_CONTENTS,
+  FOCUS_CONTENT,
   TRIPLIFY_FOCUS,
   TRIPLIFY_SELECTION,
 } from '../actions.js'
@@ -36,14 +35,6 @@ export const useWorkspaceState = defineStore('current-selection-store',
     const currentFocusQuads = ref([])
     const currentFocusContents = ref([])
 
-    function appendLog ({ error, date, args }) {
-      console.log(date, ...args) // Remote
-    }
-
-    socket.on(LOG, ({ date, args }) => {
-      appendLog({ date, args })
-    })
-
     function doLoadWorkspace ({ path }) {
       socket.emit(DIRECTORY, { path })
     }
@@ -64,7 +55,7 @@ export const useWorkspaceState = defineStore('current-selection-store',
     })
 
     watch(currentSelection, () => triplifySelection({ uris: currentSelection.value }))
-    watch(currentFocus, () => triplifyFocus({ uris: [currentFocus.value] }))
+    watch(currentFocus, () => triplifyFocus({ uri:currentFocus.value }))
 
     function triplifySelection ({ uris }) {
       socket.emit(TRIPLIFY_SELECTION, { uris: toRaw(uris) })
@@ -78,8 +69,8 @@ export const useWorkspaceState = defineStore('current-selection-store',
       }
     })
 
-    function triplifyFocus ({ uris }) {
-      socket.emit(TRIPLIFY_FOCUS, { uris: toRaw(uris) })
+    function triplifyFocus ({ uri }) {
+      socket.emit(TRIPLIFY_FOCUS, { uri: toRaw(uri) })
     }
     socket.on(TRIPLIFY_FOCUS, ({ turtle, error }) => {
       if (error) {
@@ -90,11 +81,10 @@ export const useWorkspaceState = defineStore('current-selection-store',
       }
     })
 
-    function doRetrieveContents ({ uris }) {
-      socket.emit(RETRIEVE_CONTENTS, { uris: toRaw(uris) })
+    function doRetrieveContents ({ uri }) {
+      socket.emit(FOCUS_CONTENT, { uri: toRaw(uri) })
     }
-    socket.on(RETRIEVE_CONTENTS, ({ contents, error }) => {
-      console.log('jere', { contents, error })
+    socket.on(FOCUS_CONTENT, ({ contents, error }) => {
       if (error){
         currentFocusContents.value = []
         console.error(error)
