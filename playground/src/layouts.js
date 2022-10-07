@@ -1,5 +1,5 @@
 import { ItemType } from 'golden-layout'
-import { CONTENT, CONTAINERS, SETTINGS, QUADS } from './components.js'
+import { CONTAINERS, SETTINGS, GRAPH, CONTENT, CURRENT_FOCUS_QUADS,CURRENT_SELECTION_QUADS  } from './components.js'
 
 const baseLayout = {
   root: {
@@ -63,7 +63,7 @@ const contentLayout = {
         header: { show: 'top', popout: false },
         width: 30,
         componentState: undefined,
-        ...QUADS,
+        ...CURRENT_FOCUS_QUADS,
       },
     ],
   },

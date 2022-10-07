@@ -18,8 +18,20 @@ const CONTENT = {
   title: 'Content', componentType: './components/Content.vue',
 }
 
-const QUADS = {
-  title: 'Quads', componentType: './components/Quads.vue',
+const CURRENT_FOCUS_QUADS = {
+  title: 'Quads', componentType: './components/CurrentFocusQuads.vue',
 }
 
-export { CONTAINERS, SETTINGS, GRAPH, CONTENT, QUADS }
+const CURRENT_SELECTION_QUADS = {
+  title: 'Selection Quads',
+  componentType: './components/CurrentSelectionQuads.vue',
+}
+
+export {
+  CONTAINERS,
+  SETTINGS,
+  GRAPH,
+  CONTENT,
+  CURRENT_FOCUS_QUADS,
+  CURRENT_SELECTION_QUADS,
+}

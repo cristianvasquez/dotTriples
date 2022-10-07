@@ -7,7 +7,8 @@ import {
   DIRECTORY,
   LOG,
   RETRIEVE_CONTENTS,
-  TRIPLIFY,
+  TRIPLIFY_FOCUS,
+  TRIPLIFY_SELECTION,
 } from '../actions.js'
 import ns from '../namespaces.js'
 import { toTree } from './toTree.js'
@@ -23,11 +24,17 @@ function toQuads (str) {
 
 export const useWorkspaceState = defineStore('current-selection-store',
   () => {
+  // The vault
     const currentWorkspacePath = ref()
-    const currentSelection = ref([])
+  // The folders
     const currentContainers = ref([])
-    const currentQuads = ref([])
-    const currentContents = ref([])
+  // The things I checked
+    const currentSelection = ref([])
+    const currentSelectionQuads = ref([])
+  // The current thing selected
+    const currentFocus = ref()
+    const currentFocusQuads = ref([])
+    const currentFocusContents = ref([])
 
     function appendLog ({ error, date, args }) {
       console.log(date, ...args) // Remote
@@ -56,31 +63,43 @@ export const useWorkspaceState = defineStore('current-selection-store',
       }
     })
 
-    watch(currentSelection, () => doTriplify({ uris: currentSelection.value }))
+    watch(currentSelection, () => triplifySelection({ uris: currentSelection.value }))
+    watch(currentFocus, () => triplifyFocus({ uris: [currentFocus.value] }))
 
-    function doTriplify ({ uris }) {
-      socket.emit(TRIPLIFY, { uris: toRaw(uris) })
+    function triplifySelection ({ uris }) {
+      socket.emit(TRIPLIFY_SELECTION, { uris: toRaw(uris) })
     }
-
-    socket.on(TRIPLIFY, ({ turtle, error }) => {
+    socket.on(TRIPLIFY_SELECTION, ({ turtle, error }) => {
       if (error) {
-        currentQuads.value = []
+        currentSelectionQuads.value = []
         console.error(error)
       } else {
-        currentQuads.value = toQuads(turtle)
+        currentSelectionQuads.value = toQuads(turtle)
+      }
+    })
+
+    function triplifyFocus ({ uris }) {
+      socket.emit(TRIPLIFY_FOCUS, { uris: toRaw(uris) })
+    }
+    socket.on(TRIPLIFY_FOCUS, ({ turtle, error }) => {
+      if (error) {
+        currentFocusQuads.value = []
+        console.error(error)
+      } else {
+        currentFocusQuads.value = toQuads(turtle)
       }
     })
 
     function doRetrieveContents ({ uris }) {
       socket.emit(RETRIEVE_CONTENTS, { uris: toRaw(uris) })
     }
-
     socket.on(RETRIEVE_CONTENTS, ({ contents, error }) => {
+      console.log('jere', { contents, error })
       if (error){
-        currentContents.value = []
+        currentFocusContents.value = []
         console.error(error)
       } else {
-        currentContents.value = contents
+        currentFocusContents.value = contents
       }
     })
 
@@ -88,8 +107,10 @@ export const useWorkspaceState = defineStore('current-selection-store',
       currentWorkspacePath,
       currentContainers,
       currentSelection,
-      currentContents,
-      currentQuads,
+      currentSelectionQuads,
+      currentFocus,
+      currentFocusQuads,
+      currentFocusContents,
       doLoadWorkspace,
       doRetrieveContents,
     }

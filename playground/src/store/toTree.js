@@ -5,12 +5,12 @@ function toTree (pointer) {
   const visited = rdf.termSet()
   let current = 1
 
-  function tree (ptr) {
+  function buildNode (ptr) {
     const children = ptr.out(ns.dot.contains).terms.filter(x => {
       const isNew = !visited.has(x)
       visited.add(x)
       return isNew
-    }).map(outGoing => tree(
+    }).map(outGoing => buildNode(
       ptr.node(outGoing)))
     current = current + 1
     return {
@@ -21,7 +21,8 @@ function toTree (pointer) {
     }
   }
 
-  return [tree(pointer)]
+  const root =buildNode(pointer)
+  return [root]
 }
 
 export { toTree }

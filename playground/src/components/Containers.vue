@@ -1,7 +1,8 @@
 <script setup>
-import { darkTheme, NConfigProvider, NTree } from 'naive-ui'
+import { darkTheme, NConfigProvider, NInput, NTree } from 'naive-ui'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
+import { onBeforeMount, onMounted, ref } from 'vue'
+import ns from '../namespaces.js'
 import { useWorkspaceState } from '../store/workspaceState.js'
 
 onMounted(() => {
@@ -10,7 +11,7 @@ onMounted(() => {
 
 const store = useWorkspaceState()
 const {
-  currentWorkspacePath, currentContainers, currentSelection,
+  currentWorkspacePath, currentContainers, currentSelection, currentFocus,
 } = storeToRefs(store)
 
 function init () {
@@ -22,40 +23,39 @@ function init () {
   }
 }
 
+function updateSelectedKeys (v) {
+  currentFocus.value = v[0]
+}
+
 function updateCheckedKeys (v) {
   currentSelection.value = [...v]
 }
 
-// function handleOpenContainer (node) {
-//   return new Promise((resolve) => {
-//     node.children = [
-//       {
-//         label: 'hola',
-//         key: node.key + '1',
-//         isLeaf: true,
-//       },
-//       {
-//         label: 'mundo',
-//         key: node.key + '2',
-//         isLeaf: false,
-//       },
-//     ]
-//     resolve()
-//   })
-// }
+const pattern = ref()
+
+const expanded = ref([])
+onBeforeMount(() => {
+  // This should come from the state somewhere
+  expanded.value = [ns.dot.root.value]
+})
 
 </script>
 
+
 <template>
   <n-config-provider :theme="darkTheme">
-    <!--        :on-load="handleOpenContainer"-->
+    <n-input v-model:value="pattern" placeholder="Search"/>
     <n-tree
-
         block-line
         cascade
         checkable
+        selectable
+        :default-expanded-keys="expanded"
+        :expand-on-click="true"
+        :pattern="pattern"
         :data="currentContainers"
         :checked-keys="currentSelection"
+        @update:selected-keys="updateSelectedKeys"
         @update:checked-keys="updateCheckedKeys"
     />
 
