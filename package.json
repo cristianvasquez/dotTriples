@@ -31,6 +31,7 @@
     "unified": "^10.1.2"
   },
   "devDependencies": {
+    "rdf-utils-fs": "^2.2.0",
     "cli-progress": "^3.11.2",
     "expect": "^28.1.1",
     "expect-mocha-snapshot": "^2.1.5",

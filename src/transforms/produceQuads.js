@@ -3,6 +3,7 @@ import rdf from 'rdf-ext'
 import { Transform } from 'stream'
 import { RELATION_WITH_NO_TYPE, THIS } from '../consts.js'
 import { hasUrl } from '../regexp.js'
+import { isString, trim } from '../text/stringUtils.js'
 
 class ProduceQuads extends Transform {
   constructor ({ uriResolver }, opts) {
@@ -98,14 +99,6 @@ class ProduceQuads extends Transform {
 
     callback()
   }
-}
-
-function trim (txt) {
-  return txt.replace(/^\s+|\s+$/gm, '')
-}
-
-function isString (str) {
-  return (typeof str === 'string' || str instanceof String)
 }
 
 function getEntities ({ path, raw, links }) {

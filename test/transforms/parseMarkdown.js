@@ -3,7 +3,7 @@ import { expect } from 'expect'
 import toMatchSnapshot from 'expect-mocha-snapshot'
 import { createReadStream } from 'fs'
 import { resolve } from 'path'
-import { createMarkdownParser } from '../../src/markdownParser.js'
+import { createMarkdownParser } from '../../src/markdown/markdownParser.js'
 import { ParseMarkdown } from '../../src/transforms/parseMarkdown.js'
 import {collect} from '../support/streams.js'
 

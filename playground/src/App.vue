@@ -21,7 +21,7 @@ onMounted(() => {
 <template>
   <div class="full-height">
     <div id="nav">
-      <h1>Playground</h1>
+      <h1>Dot triples playground</h1>
       <template v-for="component of components">
         <button @click="addInstance(component)">
           {{ component.title }}
