@@ -1,26 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`[MarkdownPipeline] "./Alice.md" 1`] = `
-"<http://example.org/Alice.md> <http://example.org/linked-to> <http://example.org/not-found-in-vault> <http://example.org/Alice.md> .
+"<http://example.org/Alice.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person.md> <http://example.org/Alice.md> .
+<http://example.org/Alice.md> <http://example.org/linked-to> <http://example.org/not-found-in-vault> <http://example.org/Alice.md> .
 <http://example.org/Alice.md> <http://dottriples.org/path> \\"./Alice.md\\" <http://example.org/Alice.md> .
 <http://example.org/Alice.md> <http://dottriples.org/name> \\"Alice\\" <http://example.org/Alice.md> .
-<http://example.org/Alice.md> <http://dottriples.org/size> \\"26\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/Alice.md> .
-"
-`;
-
-exports[`[MarkdownPipeline] "./Ice cream.md" 1`] = `
-"<http://example.org/Ice%20cream.md> <http://dottriples.org/path> \\"./Ice cream.md\\" <http://example.org/Ice%20cream.md> .
-<http://example.org/Ice%20cream.md> <http://dottriples.org/name> \\"Ice cream\\" <http://example.org/Ice%20cream.md> .
-<http://example.org/Ice%20cream.md> <http://dottriples.org/size> \\"19\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/Ice%20cream.md> .
+<http://example.org/Alice.md> <http://dottriples.org/size> \\"49\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/Alice.md> .
 "
 `;
 
 exports[`[MarkdownPipeline] "./Person.md" 1`] = `
-"<http://example.org/Person.md> <http://example.org/has-url> <http://web1.org> <http://example.org/Person.md> .
-<http://example.org/Person.md> <http://example.org/has-url> <http://web2.org> <http://example.org/Person.md> .
-<http://example.org/Person.md> <http://dottriples.org/path> \\"./Person.md\\" <http://example.org/Person.md> .
+"<http://example.org/Person.md> <http://dottriples.org/path> \\"./Person.md\\" <http://example.org/Person.md> .
 <http://example.org/Person.md> <http://dottriples.org/name> \\"Person\\" <http://example.org/Person.md> .
-<http://example.org/Person.md> <http://dottriples.org/size> \\"58\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/Person.md> .
+<http://example.org/Person.md> <http://dottriples.org/size> \\"21\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/Person.md> .
 "
 `;
 
@@ -35,26 +27,26 @@ exports[`[MarkdownPipeline] "./Yaml.md" 1`] = `
 "
 `;
 
-exports[`[MarkdownPipeline] "./bob/Bob.md" 1`] = `
-"<http://example.org/bob/Bob.md> <http://example.org/age> \\"44\\" <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://example.org/website> <http://bob.org> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://xmlns.com/foaf/0.1/knows> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://example.org/linked-to> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://example.org/linked-to> <http://example.org/bob/BobHouse.md> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://example.org/has-relative> <http://example.org/folder/Test.md> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://example.org/has-image> <http://example.org/folder/img.png> <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/path> \\"./bob/Bob.md\\" <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/name> \\"Bob\\" <http://example.org/bob/Bob.md> .
-<http://example.org/bob/Bob.md> <http://dottriples.org/size> \\"331\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/bob/Bob.md> .
-<http://bob.org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"WeBsiTe\\" <http://example.org/bob/Bob.md> .
+exports[`[MarkdownPipeline] "./bob/Bob Details.md" 1`] = `
+"<http://example.org/bob/Bob%20Details.md> <http://dottriples.org/path> \\"./bob/Bob Details.md\\" <http://example.org/bob/Bob%20Details.md> .
+<http://example.org/bob/Bob%20Details.md> <http://dottriples.org/name> \\"Bob Details\\" <http://example.org/bob/Bob%20Details.md> .
+<http://example.org/bob/Bob%20Details.md> <http://dottriples.org/size> \\"23\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/bob/Bob%20Details.md> .
 "
 `;
 
-exports[`[MarkdownPipeline] "./bob/BobHouse.md" 1`] = `
-"<http://example.org/bob/BobHouse.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"House\\" <http://example.org/bob/BobHouse.md> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/path> \\"./bob/BobHouse.md\\" <http://example.org/bob/BobHouse.md> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/name> \\"BobHouse\\" <http://example.org/bob/BobHouse.md> .
-<http://example.org/bob/BobHouse.md> <http://dottriples.org/size> \\"14\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/bob/BobHouse.md> .
+exports[`[MarkdownPipeline] "./bob/Bob.md" 1`] = `
+"<http://example.org/bob/Bob.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://example.org/Person.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/age> \\"44\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/website> <http://bob.org> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/lives-in> <http://example.org/houses/BobHouse.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-details> \\"[Test with absolute](Bob Details.md)\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://xmlns.com/foaf/0.1/knows> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/linked-to> <http://example.org/Alice.md> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://example.org/has-image> <http://example.org/houses/img.png> <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://dottriples.org/path> \\"./bob/Bob.md\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://dottriples.org/name> \\"Bob\\" <http://example.org/bob/Bob.md> .
+<http://example.org/bob/Bob.md> <http://dottriples.org/size> \\"405\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/bob/Bob.md> .
+<http://bob.org> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"WeBsiTe\\" <http://example.org/bob/Bob.md> .
 "
 `;
 
@@ -68,11 +60,11 @@ exports[`[MarkdownPipeline] "./dot triples.md" 1`] = `
 "
 `;
 
-exports[`[MarkdownPipeline] "./folder/Test.md" 1`] = `
-"<http://example.org/folder/Test.md> <http://example.org/linked-to> <http://example.org/not-found-in-vault> <http://example.org/folder/Test.md> .
-<http://example.org/folder/Test.md> <http://dottriples.org/path> \\"./folder/Test.md\\" <http://example.org/folder/Test.md> .
-<http://example.org/folder/Test.md> <http://dottriples.org/name> \\"Test\\" <http://example.org/folder/Test.md> .
-<http://example.org/folder/Test.md> <http://dottriples.org/size> \\"99\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/folder/Test.md> .
+exports[`[MarkdownPipeline] "./houses/BobHouse.md" 1`] = `
+"<http://example.org/houses/BobHouse.md> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> \\"House\\" <http://example.org/houses/BobHouse.md> .
+<http://example.org/houses/BobHouse.md> <http://dottriples.org/path> \\"./houses/BobHouse.md\\" <http://example.org/houses/BobHouse.md> .
+<http://example.org/houses/BobHouse.md> <http://dottriples.org/name> \\"BobHouse\\" <http://example.org/houses/BobHouse.md> .
+<http://example.org/houses/BobHouse.md> <http://dottriples.org/size> \\"14\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/houses/BobHouse.md> .
 "
 `;
 
@@ -86,12 +78,12 @@ exports[`[MarkdownPipeline] "./index.md" 1`] = `
 "
 `;
 
-exports[`[MarkdownPipeline] "./misc.md" 1`] = `
-"<http://example.org/misc.md> <http://example.org/has-url> <https://www.rand.org/content/dam/rand/pubs/papers/2008/P899.pdf> <http://example.org/misc.md> .
-<http://example.org/misc.md> <http://example.org/has-url> <http://web1.org> <http://example.org/misc.md> .
-<http://example.org/misc.md> <http://example.org/has-url> <http://web2.org> <http://example.org/misc.md> .
-<http://example.org/misc.md> <http://dottriples.org/path> \\"./misc.md\\" <http://example.org/misc.md> .
-<http://example.org/misc.md> <http://dottriples.org/name> \\"misc\\" <http://example.org/misc.md> .
-<http://example.org/misc.md> <http://dottriples.org/size> \\"220\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/misc.md> .
+exports[`[MarkdownPipeline] "./links.md" 1`] = `
+"<http://example.org/links.md> <http://example.org/has-url> <https://www.rand.org/content/dam/rand/pubs/papers/2008/P899.pdf> <http://example.org/links.md> .
+<http://example.org/links.md> <http://example.org/has-url> <http://web1.org> <http://example.org/links.md> .
+<http://example.org/links.md> <http://example.org/has-url> <http://web2.org> <http://example.org/links.md> .
+<http://example.org/links.md> <http://dottriples.org/path> \\"./links.md\\" <http://example.org/links.md> .
+<http://example.org/links.md> <http://dottriples.org/name> \\"links\\" <http://example.org/links.md> .
+<http://example.org/links.md> <http://dottriples.org/size> \\"227\\"^^<http://www.w3.org/2001/XMLSchema#integer> <http://example.org/links.md> .
 "
 `;

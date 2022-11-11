@@ -12,7 +12,7 @@ function defaultStatsToQuads ({ fileUri, path, name, stats }) {
   const { size, atime, mtime, ctime } = stats
 
   return [
-    rdf.quad(fileUri, ns.rdf.type, ns.dot.note, fileUri),
+    rdf.quad(fileUri, ns.rdf.type, ns.dot.Note, fileUri),
     rdf.quad(fileUri, ns.dot.path, rdf.literal(path), fileUri),
     rdf.quad(fileUri, ns.schema.name, rdf.literal(name), fileUri),
     rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer), fileUri),
