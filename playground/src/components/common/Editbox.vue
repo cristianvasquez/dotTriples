@@ -3,6 +3,7 @@
 import '@rdfjs-elements/rdf-editor'
 
 import { defineProps, ref, onMounted } from 'vue'
+import ns from '../../namespaces.js'
 
 const props = defineProps({
   format: {
@@ -21,10 +22,20 @@ function onParsingFailed (e) {
 
 const editor = ref()
 
-function onQuadsChanged({ detail }){
-  console.log('parsed',detail.value.length,'quads')
+function onQuadsChanged ({ detail }) {
+  console.log('parsed', detail.value.length, 'quads')
   parseError.value = ''
 }
+
+function getPrefixes () {
+  const result = {}
+  for (const [key, value] of Object.entries(ns)) {
+    result[key.toString()] = value().value.toString()
+  }
+  return result
+}
+
+const prefixes = ref(getPrefixes())
 
 </script>
 
@@ -37,6 +48,7 @@ function onQuadsChanged({ detail }){
     </div>
 
     <rdf-editor ref="editor"
+                :customPrefixes="prefixes"
                 :format="format"
                 :quads="quads"
                 auto-parse
