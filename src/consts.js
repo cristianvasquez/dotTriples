@@ -1,7 +1,0 @@
-
-const DOTDOT = '::'
-const COMMENTED_DOTDOT = '`::`'
-const THIS = '__THIS__'
-const RELATION_WITH_NO_TYPE = '__RELATION_WITH_NO_TYPE__'
-
-export { DOTDOT, COMMENTED_DOTDOT, THIS, RELATION_WITH_NO_TYPE }

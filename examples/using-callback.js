@@ -1,20 +1,24 @@
 import { resolve } from 'path'
-import { createContext } from '../src/context.js'
+import { createTriplifier } from 'rdf-from-markdown'
 import ns from '../src/namespaces.js'
 import { createMarkdownPipeline } from '../src/pipelines.js'
 
 const dir = '../test/markdown/'
-const context = await createContext(
-  { basePath: resolve(dir), baseNamespace: ns.ex, mappers: {} })
+
+const triplifier = await createTriplifier(dir, {
+  mappers: {}, baseNamespace: ns.ex,
+})
 
 const printResult = (path, dataset) => {
   console.log(path)
   console.log(dataset.toString())
 }
 
-const inputStream = createMarkdownPipeline(context, { callback: printResult })
+const inputStream = createMarkdownPipeline({
+  basePath: resolve(dir), triplifier,
+}, { callback: printResult })
 
-for (const file of context.index.files.filter(x => x.endsWith('.md'))) {
+for (const file of triplifier.index.files.filter(x => x.endsWith('.md'))) {
   inputStream.write(file)
 }
 inputStream.end()

@@ -1,7 +1,9 @@
 import { resolve } from 'path'
 import rdf from 'rdf-ext'
+import { createTriplifier } from 'rdf-from-markdown'
 import { PassThrough } from 'stream'
-import { createContext, createMarkdownPipeline, ns } from '../index.js'
+import ns from '../src/namespaces.js'
+import { createMarkdownPipeline } from '../src/pipelines.js'
 
 async function collect (readable) {
   const result = rdf.dataset()
@@ -12,8 +14,11 @@ async function collect (readable) {
 }
 
 const dir = '../test/markdown/'
-const context = await createContext(
-  { basePath: resolve(dir), baseNamespace: ns.ex, mappers: {} })
+// const dir = '../../../../obsidian/workspace/'
+
+const triplifier = await createTriplifier(dir, {
+  mappers: {}, baseNamespace: ns.ex,
+})
 
 const outputStream = new PassThrough({
   objectMode: true, write (object, encoding, callback) {
@@ -22,9 +27,10 @@ const outputStream = new PassThrough({
   },
 })
 
-const inputStream = createMarkdownPipeline(context, { outputStream })
+const inputStream = createMarkdownPipeline(
+  { basePath: resolve(dir), triplifier }, { outputStream })
 
-for (const file of context.index.files.filter(x => x.endsWith('.md'))) {
+for (const file of triplifier.index.files.filter(x => x.endsWith('.md'))) {
   inputStream.write(file)
 }
 inputStream.end()

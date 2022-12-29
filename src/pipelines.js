@@ -2,43 +2,24 @@ import { createReadStream, stat } from 'fs'
 import { resolve } from 'path'
 import rdf from 'rdf-ext'
 import { PassThrough, Transform } from 'stream'
-import { createMarkdownParser } from './markdown/markdownParser.js'
-import ns from './namespaces.js'
-import { ParseDotTriples } from './transforms/parseDotTriples.js'
-import { ParseMarkdown } from './transforms/parseMarkdown.js'
-import { ProduceQuads } from './transforms/produceQuads.js'
+import { FromMarkdown } from './transforms/fromMarkdown.js'
+import { statsToQuads } from './triplifiers/statsToQuads.js'
 
-function defaultStatsToQuads ({ fileUri, path, name, stats }) {
-  const { size, atime, mtime, ctime } = stats
-
-  return [
-    rdf.quad(fileUri, ns.rdf.type, ns.dot.Note, fileUri),
-    rdf.quad(fileUri, ns.dot.path, rdf.literal(path), fileUri),
-    rdf.quad(fileUri, ns.schema.name, rdf.literal(name), fileUri),
-    rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer), fileUri),
-    rdf.quad(fileUri, ns.dot.atime,
-      rdf.literal(atime.toISOString(), ns.xsd.dateTime), fileUri),
-    rdf.quad(fileUri, ns.dot.mtime,
-      rdf.literal(mtime.toISOString(), ns.xsd.dateTime), fileUri),
-    rdf.quad(fileUri, ns.dot.ctime,
-      rdf.literal(ctime.toISOString(), ns.xsd.dateTime), fileUri),
-  ]
+function setGraph (dataset, namedGraph) {
+  return rdf.dataset().
+    addAll([...dataset].map(
+      quad => rdf.quad(quad.subject, quad.predicate, quad.object, namedGraph)))
 }
 
 // Expects markdown files, and produces datasets
 function createMarkdownPipeline ({
-  basePath,
-  index,
-  uriResolver,
-  datasetMappers = [],
-  statsToQuads = defaultStatsToQuads,
+  basePath, triplifier, produceStats = statsToQuads,
 }, { outputStream, callback }) {
 
   if (!(outputStream || callback)) {
     throw Error('outputStream stream and/or callback is required')
   }
 
-  const markdownParser = createMarkdownParser()
   const transform = new Transform({
     objectMode: true, transform (path, enc, done) {
 
@@ -48,19 +29,15 @@ function createMarkdownPipeline ({
         if (err) {
           console.error(err)
         } else {
-
           const quadStream = new PassThrough({
-            objectMode: true,
-            write (object, encoding, callback) {
+            objectMode: true, write (object, encoding, callback) {
               this.push(object)
               callback()
             },
           })
 
           const fileStream = createReadStream(filePath).
-            pipe(new ParseMarkdown({ markdownParser }, { path }, {})).
-            pipe(new ParseDotTriples()).
-            pipe(new ProduceQuads({ uriResolver }, {})).
+            pipe(new FromMarkdown({ triplifier, path }, {})).
             pipe(quadStream)
 
           const dataset = rdf.dataset()
@@ -68,25 +45,13 @@ function createMarkdownPipeline ({
 
           fileStream.on('error', done)
           fileStream.on('end', () => {
-            const fileUri = uriResolver.getUriFromPath(path)
-            const name = uriResolver.getNameFromPath(path)
+            const fileUri = triplifier.termMapper.fromPath(path)
 
             // Add stats quads
-            dataset.addAll(statsToQuads({ fileUri, path, name, stats }))
-
-            // Apply all dataset-mappers
-            let current = dataset
-            for (const mapper of datasetMappers) {
-              current = mapper(current, {fileUri})
-              // @TODO resultDataset = mapper(current,{metadata})
-              // Metadata of the exact markdown sources is emmited, and matched with the named-graph
-            }
+            dataset.addAll(produceStats({ fileUri, path: filePath, stats }))
 
             // Set namedGraph to the current fileUri
-            const resultDataset = rdf.dataset().
-              addAll([...current].map(
-                quad => rdf.quad(quad.subject, quad.predicate, quad.object,
-                  fileUri)))
+            const resultDataset = setGraph(dataset, fileUri)
 
             // Stream output
             if (outputStream) {
@@ -99,7 +64,7 @@ function createMarkdownPipeline ({
             done()
           })
         }
-      });
+      })
     },
   })
 

@@ -6,4 +6,4 @@ async function collect (readable) {
   return data
 }
 
-export {collect}
+export { collect }

@@ -21,14 +21,9 @@
     "@rdfjs-elements/formats-pretty": "^0.5.1",
     "get-stream": "^6.0.1",
     "glob": "^8.0.3",
-    "js-yaml": "^4.1.0",
     "rdf-ext": "^2.1.0",
     "readable-stream": "^4.2.0",
-    "remark-frontmatter": "^4.0.1",
-    "remark-gfm": "^3.0.1",
-    "remark-parse": "^10.0.1",
-    "remark-wiki-link": "^1.0.4",
-    "unified": "^10.1.2"
+    "rdf-from-markdown": "^0.0.7"
   },
   "devDependencies": {
     "rdf-utils-fs": "^2.3.0",
