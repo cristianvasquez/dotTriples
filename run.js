@@ -1,9 +1,12 @@
 import { Presets, SingleBar } from 'cli-progress'
 import { resolve } from 'path'
+import { createTriplifier } from 'vault-triplifier'
+import {
+  customMapper,
+} from 'vault-triplifier/src/termMapper/defaultCustomMapper.js'
 import ns from './src/namespaces.js'
 import { createMarkdownPipeline } from './src/pipelines.js'
 import { createPrettyPrinter } from './src/streams.js'
-import { createTriplifier } from 'rdf-from-markdown'
 
 const dir = './test/markdown/'
 // const dir = '../../../obsidian/workspace/'
@@ -11,21 +14,22 @@ const dir = './test/markdown/'
 const basePath = resolve(dir)
 
 const triplifier = await createTriplifier(dir, {
-  mappers: {
-    'is a': ns.rdf.type, 'are': ns.rdf.type, 'foaf:knows': ns.foaf.knows,
-  }, baseNamespace: ns.ex,
+  baseNamespace: ns.ex, customMapper,
 })
 
 // Build pipelines
 const outputStream = await createPrettyPrinter({ prefixes: { ex: ns.ex } })
-
 const progressBar = new SingleBar({}, Presets.shades_classic)
-const files = triplifier.index.files.filter(x => x.endsWith('.md'))
+
+const files = triplifier.vault.getFiles().filter(x => x.endsWith('.md'))
 progressBar.start(files.length, 0)
 const callback = (path, dataset) => {
   progressBar.increment()
 }
-const inputStream = createMarkdownPipeline({ basePath, triplifier },
+
+const options = { addLabels: true, includeWikipaths: true, splitOnHeader: true }
+
+const inputStream = createMarkdownPipeline({ basePath, triplifier, options },
   { outputStream, callback })
 
 // Add files one by one

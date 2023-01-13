@@ -13,7 +13,7 @@ function setGraph (dataset, namedGraph) {
 
 // Expects markdown files, and produces datasets
 function createMarkdownPipeline ({
-  basePath, triplifier, produceStats = statsToQuads,
+  basePath, triplifier, options, produceStats = statsToQuads,
 }, { outputStream, callback }) {
 
   if (!(outputStream || callback)) {
@@ -37,7 +37,7 @@ function createMarkdownPipeline ({
           })
 
           const fileStream = createReadStream(filePath).
-            pipe(new FromMarkdown({ triplifier, path }, {})).
+            pipe(new FromMarkdown({ triplifier, path, options}, {})).
             pipe(quadStream)
 
           const dataset = rdf.dataset()
@@ -45,7 +45,8 @@ function createMarkdownPipeline ({
 
           fileStream.on('error', done)
           fileStream.on('end', () => {
-            const fileUri = triplifier.termMapper.fromPath(path)
+
+            const fileUri = triplifier.termMapper.pathToUri(path)
 
             // Add stats quads
             dataset.addAll(produceStats({ fileUri, path: filePath, stats }))

@@ -23,7 +23,7 @@
     "glob": "^8.0.3",
     "rdf-ext": "^2.1.0",
     "readable-stream": "^4.2.0",
-    "rdf-from-markdown": "^0.0.7"
+    "vault-triplifier": "^0.2.3"
   },
   "devDependencies": {
     "rdf-utils-fs": "^2.3.0",
