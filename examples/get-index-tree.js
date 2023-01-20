@@ -1,16 +1,16 @@
 import rdf from 'rdf-ext'
-import { createTriplifier } from 'rdf-from-markdown'
+import { createTriplifier } from 'vault-triplifier'
 
 import ns from '../src/namespaces.js'
 import { triplifyIndex } from '../src/triplifiers/indexTriplifier.js'
 
 const dir = '../test/markdown/'
 
-const triplifier = await createTriplifier(dir, {
-  mappers: {}, baseNamespace: ns.ex,
-})
-
-const pointer = triplifyIndex(triplifier)
+const options = {
+  baseNamespace: ns.ex, namespaces: ns,
+}
+const triplifier = await createTriplifier(dir)
+const pointer = triplifyIndex(triplifier, options)
 
 function treeRoot (pointer) {
   const visited = rdf.termSet()

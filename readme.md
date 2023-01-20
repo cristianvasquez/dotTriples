@@ -1,3 +1,7 @@
+## Dot-triples
+
 Produces RDF triples from markdown and canvas.
 
-The results can be streamed.
+It just executes [Vault triplifier](https://github.com/cristianvasquez/vault-triplifier), add some metadata and uploads it into a Triplestore
+
+

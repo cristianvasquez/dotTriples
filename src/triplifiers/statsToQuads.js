@@ -18,7 +18,6 @@ function statsToQuads ({ fileUri, path, stats }) {
       fileUri),
     rdf.quad(fileUri, ns.dot.size, rdf.literal(size, ns.xsd.integer), fileUri),
 
-
     rdf.quad(fileUri, ns.dot.atime,
       rdf.literal(atime.toISOString(), ns.xsd.dateTime), fileUri),
     rdf.quad(fileUri, ns.dot.mtime,

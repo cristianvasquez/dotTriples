@@ -4,13 +4,6 @@ import rdf from 'rdf-ext'
 import { PassThrough, Transform } from 'stream'
 import ns from './namespaces.js'
 
-function createJsonPrinter () {
-  return createOutputStream({
-    forEach: (chunk => {
-      console.log(JSON.stringify(chunk, null, 2))
-    }),
-  })
-}
 
 function createDatasetPrinter () {
   return createOutputStream({
@@ -78,8 +71,8 @@ function createOutputStream ({ forEach } = { forEach: x => x }) {
 }
 
 export {
-  createJsonPrinter,
   createDatasetPrinter,
   createCounter,
   createPrettyPrinter,
+  createOutputStream
 }

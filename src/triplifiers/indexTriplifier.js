@@ -9,32 +9,39 @@ function getName (url) {
   return url.split('/').splice(url.split('/').length - 1)[0]
 }
 
-function triplifyIndex ({ index, termMapper }) {
-  const { files, directories } = index
+function triplifyIndex (triplifier, options) {
   const dataset = rdf.dataset()
 
-  for (const path of files) {
-    const container = getParent(path)
-    const containerUri = container === '.' ? ns.dot.root : termMapper.fromPath(
-      container)
-    const fileUri = termMapper.fromPath(path)
-    dataset.add(rdf.quad(containerUri, ns.dot.contains, fileUri, ns.dot.index))
-    dataset.add(rdf.quad(fileUri, ns.schema.name, rdf.literal(getName(path)),
-      ns.dot.index))
-    dataset.add(rdf.quad(fileUri, ns.dot.path, rdf.literal(path), fileUri))
+  const toUri = (path) => triplifier.termMapper.pathToUri(path, options)
+
+  const nameToUri = (name) => {
+    const { path } = triplifier.termMapper.getPathByName(name) || {}
+    return toUri(path)
   }
 
-  for (const path of directories) {
-    const parent = getParent(path)
-    const parentUri = parent === '.' ? ns.dot.root : termMapper.fromPath(parent)
-    const containerUri = termMapper.fromPath(path)
+  for (const filePath of triplifier.getFiles()) {
+    const directoryPath = getParent(filePath)
+    const containerUri = directoryPath === '' ? ns.dot.root : toUri(
+      directoryPath)
+
+    const fileUri = nameToUri(filePath)
+    dataset.add(rdf.quad(containerUri, ns.dot.contains, fileUri, ns.dot.index))
     dataset.add(
-      rdf.quad(parentUri, ns.dot.contains, containerUri, ns.dot.index))
-    dataset.add(
-      rdf.quad(containerUri, ns.schema.name, rdf.literal(getName(path)),
+      rdf.quad(fileUri, ns.schema.name, rdf.literal(getName(filePath)),
         ns.dot.index))
+    dataset.add(rdf.quad(fileUri, ns.dot.path, rdf.literal(filePath), fileUri))
+  }
+
+  for (const directoryPath of triplifier.getDirectories()) {
+    const parentDirectoryPath = getParent(directoryPath)
+    const parentUri = parentDirectoryPath === '' ? ns.dot.root : toUri(
+      parentDirectoryPath)
+    const childUri = toUri(directoryPath)
+    dataset.add(rdf.quad(parentUri, ns.dot.contains, childUri, ns.dot.index))
     dataset.add(
-      rdf.quad(containerUri, ns.rdf.type, ns.dot.Folder, ns.dot.index))
+      rdf.quad(childUri, ns.schema.name, rdf.literal(getName(directoryPath)),
+        ns.dot.index))
+    dataset.add(rdf.quad(childUri, ns.rdf.type, ns.dot.Folder, ns.dot.index))
   }
 
   dataset.add(rdf.quad(ns.dot.root, ns.rdf.type, ns.dot.Folder, ns.dot.index))

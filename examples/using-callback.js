@@ -1,13 +1,19 @@
 import { resolve } from 'path'
-import { createTriplifier } from 'rdf-from-markdown'
+import { createTriplifier } from 'vault-triplifier'
 import ns from '../src/namespaces.js'
 import { createMarkdownPipeline } from '../src/pipelines.js'
 
 const dir = '../test/markdown/'
 
-const triplifier = await createTriplifier(dir, {
-  mappers: {}, baseNamespace: ns.ex,
-})
+const options = {
+  addLabels: true,
+  includeWikipaths: true,
+  splitOnHeader: true,
+  baseNamespace: ns.ex,
+  namespaces: ns,
+}
+
+const triplifier = await createTriplifier(dir)
 
 const printResult = (path, dataset) => {
   console.log(path)
@@ -15,10 +21,10 @@ const printResult = (path, dataset) => {
 }
 
 const inputStream = createMarkdownPipeline({
-  basePath: resolve(dir), triplifier,
+  basePath: resolve(dir), triplifier, options,
 }, { callback: printResult })
 
-for (const file of triplifier.index.files.filter(x => x.endsWith('.md'))) {
+for (const file of triplifier.getMarkdownFiles()) {
   inputStream.write(file)
 }
 inputStream.end()

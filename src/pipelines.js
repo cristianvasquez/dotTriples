@@ -37,7 +37,7 @@ function createMarkdownPipeline ({
           })
 
           const fileStream = createReadStream(filePath).
-            pipe(new FromMarkdown({ triplifier, path, options}, {})).
+            pipe(new FromMarkdown({ triplifier, path, options }, {})).
             pipe(quadStream)
 
           const dataset = rdf.dataset()
@@ -46,7 +46,7 @@ function createMarkdownPipeline ({
           fileStream.on('error', done)
           fileStream.on('end', () => {
 
-            const fileUri = triplifier.termMapper.pathToUri(path)
+            const fileUri = triplifier.termMapper.pathToUri(path, options)
 
             // Add stats quads
             dataset.addAll(produceStats({ fileUri, path: filePath, stats }))
@@ -58,6 +58,7 @@ function createMarkdownPipeline ({
             if (outputStream) {
               outputStream.write(resultDataset)
             }
+
             // Callback method
             if (callback) {
               callback(path, resultDataset)
